@@ -4,7 +4,16 @@
  */
 package stats.gui;
 
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.DefaultListModel;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import stats.core.DataType;
+import stats.core.Table;
 
 /**
  *
@@ -17,9 +26,47 @@ public class TablePanel extends javax.swing.JPanel {
      */
     public TablePanel() {
         initComponents();
-        table_model = new TableModel();
-        jt_table.setModel(table_model);        
-        jb_table_name.setText(table_model.name());
+
+        // initialize table object
+        table = new Table();
+        // initialize main_table
+        table_model = new MainTableModel(table);
+        column_model = new MainTableColumnModel(table);
+        column_model.setColumnSelectionAllowed(true);
+
+        main_table = new JTable(table_model, column_model);
+        main_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        main_table.setAutoCreateColumnsFromModel(true);
+        // initialize row_tabler
+        row_table = new JTable(new RowTableModel(table));
+        row_table.setSelectionModel(main_table.getSelectionModel());
+        row_table.setDefaultRenderer(Object.class,
+                main_table.getTableHeader().getDefaultRenderer());
+
+
+        Dimension fixedSize = row_table.getPreferredSize();
+        JViewport viewport = new JViewport();
+        viewport.setView(row_table);
+        viewport.setPreferredSize(fixedSize);
+        viewport.setMaximumSize(fixedSize);
+
+        scrollPane.setRowHeaderView(viewport);
+        scrollPane.setViewportView(main_table);
+
+        table_main_button.setText(table.name());
+        table_main_button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(table);
+            }
+        });
+
+        // setting of popup menus
+        initPopUpMenuColumns();
+        initPopupMenuRows();
+        main_table.getTableHeader().setComponentPopupMenu(popup_columns);
+        row_table.setComponentPopupMenu(popup_rows);
+
         initColumnList();
     }
 
@@ -39,9 +86,8 @@ public class TablePanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jl_columns = new javax.swing.JList();
-        jb_table_name = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jt_table = new javax.swing.JTable();
+        table_main_button = new javax.swing.JButton();
+        scrollPane = new javax.swing.JScrollPane();
 
         setAutoscrolls(true);
         setPreferredSize(new java.awt.Dimension(600, 600));
@@ -62,7 +108,7 @@ public class TablePanel extends javax.swing.JPanel {
         jl_columns.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Columns", javax.swing.border.TitledBorder.RIGHT, javax.swing.border.TitledBorder.DEFAULT_POSITION));
         jScrollPane4.setViewportView(jl_columns);
 
-        jb_table_name.setText("TableName");
+        table_main_button.setText("TableName");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -70,70 +116,122 @@ public class TablePanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jb_table_name, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
+                    .addComponent(table_main_button, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(0, 0, 0))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jb_table_name)
+                .addComponent(table_main_button)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
         );
 
         jSplitPane2.setLeftComponent(jPanel1);
 
         jSplitPane1.setLeftComponent(jSplitPane2);
-
-        jt_table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
-        jt_table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        jt_table.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jt_table);
-
-        jSplitPane1.setRightComponent(jScrollPane1);
+        jSplitPane1.setRightComponent(scrollPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addGap(0, 500, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addGap(0, 420, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
-    private javax.swing.JButton jb_table_name;
     private javax.swing.JList jl_columns;
     private javax.swing.JList jl_rows;
-    private javax.swing.JTable jt_table;
+    private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JButton table_main_button;
     // End of variables declaration//GEN-END:variables
-    private TableModel table_model;
+
+    private JTable row_table;
+
+    private JTable main_table;
+
+    private Table table;
+
+    private MainTableModel table_model;
+
+    private MainTableColumnModel column_model;
+
+    private JPopupMenu popup_columns;
+
+    private JPopupMenu popup_rows;
+
+    private void initPopUpMenuColumns() {
+        popup_columns = new JPopupMenu();
+        JMenuItem popup_cols_insert = new JMenuItem("Insert");
+        JMenuItem popup_cols_delete = new JMenuItem("Delete");
+        JMenuItem popup_cols_properties = new JMenuItem("Properties");
+
+        popup_cols_insert.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int[] selected_cols = column_model.getSelectedColumns();
+                for (int i = 0; i < selected_cols.length; i++)
+                    column_model.insertColumns(
+                            selected_cols[i] + i,
+                            DataType.CHARACTER, 1);
+            }
+        });
+        popup_cols_delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        });
+
+        popup_columns.add(popup_cols_properties);
+        popup_columns.addSeparator();
+        popup_columns.add(popup_cols_insert);
+        popup_columns.add(popup_cols_delete);
+    }
+
+    private void initPopupMenuRows() {
+        popup_rows = new JPopupMenu("Rows");
+        JMenuItem popup_rows_marker = new JMenuItem("Marker");
+        JMenuItem popup_rows_size = new JMenuItem("Size");
+        JMenuItem popup_rows_insert = new JMenuItem("Insert");
+        JMenuItem popup_rows_delete = new JMenuItem("Delete");
+
+        popup_rows_insert.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                table.addRow();
+                main_table.updateUI();
+                row_table.updateUI();
+
+            }
+        });
+        popup_rows.add(popup_rows_marker);
+        popup_rows.add(popup_rows_size);
+        popup_rows.addSeparator();
+        popup_rows.add(popup_rows_insert);
+        popup_rows.add(popup_rows_delete);
+
+
+    }
 
     private void initColumnList() {
         DefaultListModel list_model = new DefaultListModel();
 
-        for (int i = 0; i < table_model.getColumnCount(); i++)
+        for (int i = 0; i < table.columns(); i++)
         {
             //JLabel label = new JLabel();
             //label.setText(table_model.getColumnName(i));
@@ -148,7 +246,7 @@ public class TablePanel extends javax.swing.JPanel {
 //
 //            }
             //list_model.addElement(label);
-            list_model.addElement(table_model.getColumnName(i));
+            list_model.addElement(table.getColumnName(i));
         }
         jl_columns.setModel(list_model);
     }

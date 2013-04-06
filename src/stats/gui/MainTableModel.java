@@ -12,30 +12,14 @@ import stats.core.Table;
  *
  * @author marco
  */
-public class TableModel extends AbstractTableModel {
+public class MainTableModel extends AbstractTableModel {
 
     private Table table;
 
-    TableModel() {
-        this.table = new Table();
-    }
-
-    TableModel(String name) {
-        this.table = new Table(name);
-    }
-
-    TableModel(Table table) {
+    MainTableModel(Table table) {
         this.table = table;
     }
-
-    public String name() {
-        return table.name();
-    }
-
-    public DataType getColumnType(int column) {
-        return table.getColumnType(column);
-    }
-
+    
     @Override
     public int getRowCount() {
         return table.rows();
@@ -65,4 +49,6 @@ public class TableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         table.set(columnIndex, rowIndex, aValue.toString());
     }
+
+    
 }
