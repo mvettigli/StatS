@@ -15,18 +15,18 @@ package stats.core;
  */
 public enum DataType {
 
-    /**
-     * Data type returned by alphanumeric {@code Character} class.
-     */
-    CHARACTER,
-    /**
-     * Data type returned by numeric {@code Numeric} class.
-     */
-    NUMERIC,
-    /**
-     * Special data type returned by {@code Array}s when data type is not
-     * defined yet.
-     */
-    UNDEFINED
+/**
+ * Data type returned by alphanumeric {@code Character} class.
+ */
+CHARACTER,
+/**
+ * Data type returned by numeric {@code Numeric} class.
+ */
+NUMERIC,
+/**
+ * Special data type returned by {@code Array}s when data type is not
+ * defined yet.
+ */
+UNDEFINED
 
 }
