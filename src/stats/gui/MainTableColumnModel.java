@@ -21,6 +21,7 @@ private Table table;
 
 public MainTableColumnModel(Table table) {
     this.table = table;
+    setColumnSelectionAllowed(true);
 }
 
 public void insertColumns(int index, DataType type, int number) {
@@ -76,5 +77,7 @@ public void removeColumns(int index, int number) {
     fireColumnRemoved(new TableColumnModelEvent(this,
             index, index + number));
 }
+
+
 
 }

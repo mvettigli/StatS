@@ -88,7 +88,6 @@ public Table(String name) {
     {
         table_name = name;
     }
-
 }
 
 /**

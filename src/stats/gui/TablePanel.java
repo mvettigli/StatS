@@ -4,14 +4,30 @@
  */
 package stats.gui;
 
+import com.sun.java.swing.plaf.motif.MotifBorders;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.StrokeBorder;
+import javax.swing.plaf.metal.MetalBorders;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import stats.core.DataType;
 import stats.core.Table;
 
@@ -21,37 +37,27 @@ import stats.core.Table;
  */
 public class TablePanel extends javax.swing.JPanel {
 
+private static Color header_forecolor = new Color(0, 0, 0);
+
+private static Color header_unselected_color = new Color(230, 230, 230);
+
+private static Color header_selected_color = new Color(200, 200, 200);
+
 /**
  * Creates new form TablePanel
  */
 public TablePanel() {
     initComponents();
 
+
     // initialize table object
     table = new Table();
     // initialize main_table
     table_model = new MainTableModel(table);
     column_model = new MainTableColumnModel(table);
-    column_model.setColumnSelectionAllowed(true);
 
-    main_table = new JTable(table_model, column_model);
-    main_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    main_table.setAutoCreateColumnsFromModel(true);
-    // initialize row_tabler
-    row_table = new JTable(new RowTableModel(table));
-    row_table.setSelectionModel(main_table.getSelectionModel());
-    row_table.setDefaultRenderer(Object.class,
-            main_table.getTableHeader().getDefaultRenderer());
-
-
-    Dimension fixedSize = row_table.getPreferredSize();
-    JViewport viewport = new JViewport();
-    viewport.setView(row_table);
-    viewport.setPreferredSize(fixedSize);
-    viewport.setMaximumSize(fixedSize);
-
-    scrollPane.setRowHeaderView(viewport);
-    scrollPane.setViewportView(main_table);
+    initMainTable();
+    initRowTable();
 
     table_main_button.setText(table.name());
     table_main_button.addActionListener(new ActionListener() {
@@ -177,9 +183,9 @@ private JPopupMenu popup_rows;
 
 private void initPopUpMenuColumns() {
     popup_columns = new JPopupMenu();
+    JMenuItem popup_cols_properties = new JMenuItem("Properties");
     JMenuItem popup_cols_insert = new JMenuItem("Insert");
     JMenuItem popup_cols_delete = new JMenuItem("Delete");
-    JMenuItem popup_cols_properties = new JMenuItem("Properties");
 
     popup_cols_insert.addActionListener(new ActionListener() {
     @Override
@@ -232,23 +238,92 @@ private void initColumnList() {
     DefaultListModel list_model = new DefaultListModel();
 
     for (int i = 0; i < table.columns(); i++)
-    {
-        //JLabel label = new JLabel();
-        //label.setText(table_model.getColumnName(i));
-//            switch (table_model.getColumnType(i))
-//            {
-//                case CHARACTER:
-//                    label.setIcon(new ImageIcon(getClass()
-//                            .getResource("/stats/gui/icons/character.png")));
-//                case NUMERIC:
-//                    label.setIcon(new ImageIcon(getClass()
-//                            .getResource("/stats/gui/icons/numeric.png")));
-//
-//            }
-        //list_model.addElement(label);
-        list_model.addElement(table.getColumnName(i));
-    }
+        list_model.addElement(table.getColumnType(i)
+                + "_" + table.getColumnName(i));
+
     jl_columns.setModel(list_model);
+    jl_columns.setCellRenderer(new ColumnListRenderer());
+}
+
+private void initMainTable() {
+
+    main_table = new JTable(table_model, column_model);
+    main_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    main_table.setAutoCreateColumnsFromModel(true);
+    main_table.getTableHeader().setPreferredSize(new Dimension(100, 30));
+    // set the render of the table header
+    main_table.getTableHeader().setDefaultRenderer(new TableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected,
+            boolean hasFocus, int row, int column) {
+        // Create new JLabel to show the content of the header
+        JLabel label = new JLabel();
+        label.setOpaque(true);
+        label.setText(value.toString());    // actually class is String
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setForeground(header_forecolor);
+        label.setBorder(new MetalBorders.TableHeaderBorder());
+        /* because the method returns always false, the column selection 
+         * must be checked through JTable object. */
+        isSelected = main_table.isColumnSelected(column);
+        if (isSelected) label.setBackground(header_selected_color);
+        else label.setBackground(header_unselected_color);
+        // return the JLabel
+        return label;
+    }
+    });
+    // set the table in the scrollpane
+    scrollPane.setViewportView(main_table);
+
+}
+
+private void initRowTable() {
+    // initialize row table and define the model
+    row_table = new JTable(new AbstractTableModel() {
+    @Override
+    public int getRowCount() {
+        return table.rows();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return 1;   // single-column table
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        return rowIndex + 1;    // returns row index
+    }
+    });
+    row_table.setSelectionModel(main_table.getSelectionModel());
+    row_table.setDefaultRenderer(Object.class, new TableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected,
+            boolean hasFocus, int row, int column) {
+        JLabel label = new JLabel();
+        label.setOpaque(true);
+        label.setText(value.toString());
+        label.setForeground(header_forecolor);
+        if (isSelected) label.setBackground(header_selected_color);
+        else label.setBackground(header_unselected_color);
+        label.setHorizontalAlignment(JLabel.RIGHT);
+        return label;
+    }
+    });
+
+    // initialize the viewport for 
+    Dimension fixedSize = new Dimension(60, 0);    
+    JViewport row_view = new JViewport();
+    row_view.setView(row_table);
+    row_view.setPreferredSize(fixedSize);
+    row_view.setMaximumSize(fixedSize);
+
+    scrollPane.setRowHeaderView(row_view);
+    
+
+
 }
 
 }
