@@ -78,6 +78,4 @@ public void removeColumns(int index, int number) {
             index, index + number));
 }
 
-
-
 }
