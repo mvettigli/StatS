@@ -5,7 +5,6 @@
 package stats.gui;
 
 import javax.swing.table.AbstractTableModel;
-import stats.core.DataType;
 import stats.core.Table;
 
 /**
@@ -15,9 +14,11 @@ import stats.core.Table;
 public class MainTableModel extends AbstractTableModel {
 
     private Table table;
+    boolean isEditable;
 
-    MainTableModel(Table table) {
+    MainTableModel(Table table, boolean isEditable) {
         this.table = table;
+        this.isEditable = isEditable;
     }
     
     @Override
@@ -31,24 +32,23 @@ public class MainTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {               
+    public Object getValueAt(int rowIndex, int columnIndex) {
         return table.get(columnIndex, rowIndex);
     }
 
     @Override
-    public String getColumnName(int column) {        
+    public String getColumnName(int column) {
         return table.getColumnName(column);
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return isEditable;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         table.set(columnIndex, rowIndex, aValue.toString());
     }
-
     
 }

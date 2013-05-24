@@ -203,6 +203,22 @@ public boolean isRowIndex(int row) {
 }
 
 /**
+ * Checks if the string is a valid column name for renaming or insertion.
+ *
+ * @param name the name of the column
+ * @return true if unique and not null, else false.
+ */
+public boolean isColumnNameValid(String name) {
+    boolean uniqueness = true;
+    // check if column name is unique in the table
+    for (int i = 0; i < table_cols; i++)
+        uniqueness &= !name.equals(columns.get(i).name());
+    // check if it is null and return result
+    uniqueness &= !name.isEmpty();
+    return uniqueness;
+}
+
+/**
  * Inserts a new column of at the beginning of the {@code Table} object.
  * The type of the column is {@code DataType.CHARACTER} by default.
  *
@@ -647,18 +663,11 @@ public String toString() {
  */
 private String getUntitledColumn() {
     // initialize variables
-    boolean is_name_unique;
     String untitled_name;
+    // check if untitle name is valid, else add a progressive number to its end
     do
-    {
-        // assign an untitled name..
-        is_name_unique = true;
         untitled_name = "Column" + untitled_column++;
-        // ..and check if the name is unique inside the Table
-        for (int i = 0; i < table_cols; i++)
-            is_name_unique &= !untitled_name.equals(columns.get(i).name());
-        // repeat the process until a unique untitled name is found
-    } while (!is_name_unique);
+    while (!isColumnNameValid(untitled_name));
     return untitled_name;
 }
 
