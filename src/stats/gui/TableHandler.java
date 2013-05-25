@@ -93,7 +93,7 @@ public class TableHandler extends javax.swing.JPanel {
    * Default constructor for creating new TableHandler form.
    */
   public TableHandler() {
-    this(new Table(), true);   // FIXME: default is false, to be changed
+    this(new Table(), false);   // FIXME: default is false, to be changed
   }
 
   /**
@@ -508,9 +508,10 @@ public class TableHandler extends javax.swing.JPanel {
       /**
        * Handles column selection, column addition to the end of the table and
        * pop-up menu. If user clicks on the table header but not pointing a
-       * column a new column is added to the end of the table. When user click
-       * on column headers, it select them. Thanks to key modifiers (CTRL,
-       * SHIFT) the selection mode changes to toggle and range selection.
+       * column a new column is added to the end of the table. Pressing CTRL
+       * key allow for multiple column addition. When user click on column
+       * headers, it select them. Thanks to key modifiers (CTRL, SHIFT) the
+       * selection mode changes to toggle and range selection.
        */
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -523,14 +524,37 @@ public class TableHandler extends javax.swing.JPanel {
           if (isEditable && e.getButton() == MouseEvent.BUTTON1
                   && e.getClickCount() == 2)
           {
-            // add column to the table object, by default of character type
-            table.addColumn();
+            // get number of columns to be inserted
+            int colNumber = 1;
+            // check if control is pressed to add more columns at once
+            if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK)
+            {
+              try
+              {
+                // ask for column number and check if it is positive
+                colNumber = Integer.parseInt(JOptionPane.showInputDialog(
+                        scrollPane, "Insert number of columns to be added",
+                        "Add columns...", JOptionPane.QUESTION_MESSAGE));
+                if (colNumber <= 0) throw new NumberFormatException();
+              } catch (NumberFormatException ex)
+              {
+                JOptionPane.showMessageDialog(scrollPane,
+                        "You must insert a positive integer number.",
+                        "Validation error", JOptionPane.ERROR_MESSAGE);
+                return;
+              }
+            }
+            // add columns to the table object, by default of character type
+            table.addColumns(colNumber);
             // update table column model of main table
-            int lastIndex = table.columns() - 1;
-            TableColumn tableColumn = new TableColumn();
-            tableColumn.setModelIndex(lastIndex);
-            tableColumn.setHeaderValue(table.getColumnName(lastIndex));
-            main_table.addColumn(tableColumn);
+            for (int i = colNumber; i > 0; i--)
+            {
+              int index = table.columns() - i;
+              TableColumn tableColumn = new TableColumn();
+              tableColumn.setModelIndex(index);
+              tableColumn.setHeaderValue(table.getColumnName(index));
+              main_table.addColumn(tableColumn);
+            }
           }
           // this return statement prevents improper usage of null index
           return;
@@ -642,7 +666,7 @@ public class TableHandler extends javax.swing.JPanel {
        */
       @Override
       public Dimension getPreferredSize() {
-        return new Dimension(row_table.getPreferredSize());
+        return row_table.getPreferredSize();
       }
     };
     row_view.setView(row_table);
@@ -653,7 +677,8 @@ public class TableHandler extends javax.swing.JPanel {
     scrollPane.getRowHeader().addMouseListener(new MouseListener() {
       /**
        * Handles row addition at the end of the table. By double left-click on
-       * row header a new row is added at the end of the table.
+       * row header a new row is added at the end of the table. Pressing CTRL
+       * key allow for multiple row addition.
        */
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -661,14 +686,34 @@ public class TableHandler extends javax.swing.JPanel {
         if (isEditable && e.getButton() == MouseEvent.BUTTON1
                 && e.getClickCount() == 2)
         {
+          // get number of rows to be inserted
+          int rowNumber = 1;
+          // check if control is pressed to add more rows at once
+          if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK)
+          {
+            try
+            {
+              // ask for row number and check it is positive
+              rowNumber = Integer.parseInt(JOptionPane.showInputDialog(
+                      scrollPane, "Insert number of rows to be added",
+                      "Add rows...", JOptionPane.QUESTION_MESSAGE));
+              if (rowNumber <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException ex)
+            {
+              JOptionPane.showMessageDialog(scrollPane,
+                      "You must insert a positive integer number.",
+                      "Validation error", JOptionPane.ERROR_MESSAGE);
+              return;
+            }
+          }
           // add row to Table object
-          table.addRow();
+          table.addRows(rowNumber);
           // update row and main table models
-          int lastRow = table.rows() - 1;
+          int lastRow = table.rows() - rowNumber;
           RowTableModel row_model = (RowTableModel) row_table.getModel();
           MainTableModel main_model = (MainTableModel) main_table.getModel();
-          row_model.fireTableRowsInserted(lastRow, lastRow);
-          main_model.fireTableRowsInserted(lastRow, lastRow);
+          row_model.fireTableRowsInserted(lastRow, table.rows() - 1);
+          main_model.fireTableRowsInserted(lastRow, table.rows() - 1);
         }
 
       }
@@ -708,7 +753,7 @@ public class TableHandler extends javax.swing.JPanel {
    */
   private void initToolBar() {
     // initialize table name label
-    tableNameLabel.setText(table.name());
+    tableNameLabel.setText(table.name());    
     // FIXME:for debug purpose, to be removed
     tableNameLabel.addMouseListener(new MouseListener() {
       @Override
