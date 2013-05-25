@@ -15,6 +15,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import stats.core.*;
 import static stats.core.DataType.*;
 
@@ -93,7 +94,7 @@ public class TableHandler extends javax.swing.JPanel {
    * Default constructor for creating new TableHandler form.
    */
   public TableHandler() {
-    this(new Table(), false);   // FIXME: default is false, to be changed
+    this(new Table(), true);   // FIXME: default is false, to be changed
   }
 
   /**
@@ -218,6 +219,11 @@ public class TableHandler extends javax.swing.JPanel {
     cols_PopUp.add(col_insert);
 
     col_delete.setText("Delete");
+    col_delete.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        col_deleteActionPerformed(evt);
+      }
+    });
     cols_PopUp.add(col_delete);
 
     tableNameLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -251,59 +257,102 @@ public class TableHandler extends javax.swing.JPanel {
    * check if column name(s) are allowed in the table. If one of them is not
    * allowed, the renaming operation will be aborted.
    *
-   * @param evt the action event
-   * @throws IllegalArgumentException if no column is selected
+   * @param evt the action event.
+   * @throws IllegalArgumentException if no column is selected.
    */
-    private void col_renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_renameActionPerformed
-      // get selected columns and check for empty selection
-      int[] selected_cols = getSelectedColumns();
-      if (selected_cols.length == 0)
-        throw new IllegalArgumentException("Empty column selection.");
-      // ask for a new column name
-      String rootName = JOptionPane.showInputDialog(this,
-              "Insert new column name", "Rename column(s)...",
-              JOptionPane.QUESTION_MESSAGE);
-      // check if rename operation was aborted
-      if (rootName == null) return;
-      // check if all column names are valid
-      String columnName = rootName;
-      String error_log = new String();
-      boolean error_state = false;
-      for (int i = 0; i < selected_cols.length; i++)
+  private void col_renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_renameActionPerformed
+    // get selected columns and check for empty selection
+    int[] selected_cols = getSelectedColumns();
+    if (selected_cols.length == 0)
+      throw new IllegalArgumentException("Empty column selection.");
+    // ask for a new column name
+    String rootName = JOptionPane.showInputDialog(this,
+            "Insert new column name", "Rename column(s)...",
+            JOptionPane.QUESTION_MESSAGE);
+    // check if rename operation was aborted
+    if (rootName == null) return;
+    // check if all column names are valid
+    String columnName = rootName;
+    String error_log = new String();
+    boolean error_state = false;
+    for (int i = 0; i < selected_cols.length; i++)
+    {
+      if (selected_cols.length != 1) columnName = rootName + (i + 1);
+      // generate an error message if column name is not valid
+      if (!table.isColumnNameValid(columnName))
       {
-        if (selected_cols.length != 1) columnName = rootName + (i + 1);
-        // generate an error message if column name is not valid
-        if (!table.isColumnNameValid(columnName))
-        {
-          error_state = true;
-          error_log += "ERROR: " + (columnName.isEmpty()
-                  ? "Empty name" : "\"" + columnName + "\"\n");
-        }
+        error_state = true;
+        error_log += "ERROR: " + (columnName.isEmpty()
+                ? "Empty name" : "\"" + columnName + "\"\n");
       }
-      // show an error message with details of unvalid column names
-      if (error_state)
+    }
+    // show an error message with details of unvalid column names
+    if (error_state)
+    {
+      JOptionPane.showMessageDialog(this,
+              "Column name(s) must be unique inside the table and "
+              + "cannot be empty.\n\n" + error_log,
+              "Invalid column name(s)",
+              JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    // for each selected column change column name
+    columnName = rootName;
+    for (int i = 0; i < selected_cols.length; i++)
+    {
+      if (selected_cols.length != 1) columnName = rootName + (i + 1);
+      // change column name in the table and update TableColumnModel
+      table.setColumnName(selected_cols[i], columnName);
+      TableColumn column = main_table.getColumnModel()
+              .getColumn(selected_cols[i]);
+      column.setHeaderValue(columnName);
+    }
+    // update main table
+    main_table.getTableHeader().repaint();
+  }//GEN-LAST:event_col_renameActionPerformed
+
+  /**
+   * Handles column removal upon selection. Because the methods uses
+   * currently selected columns from {@code col_selectionModel}, an {@code
+   * IllegalArgumentException} will be thrown if selection is null. At least
+   * one column must be present in the table. This method will parse current
+   * column selection and remove both data and {@link TableColumn} objects.
+   * Other column indexes must be shift to match table model.
+   *
+   * @param evt the action event.
+   * @throws IllegalArgumentException if no column is selected.
+   */
+  private void col_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_deleteActionPerformed
+    // get selected columns and check for empty selection
+    int[] selected_cols = getSelectedColumns();
+    if (selected_cols.length == 0)
+      throw new IllegalArgumentException("Empty column selection.");
+    // check for maximum number of columns to be deleted
+    if (selected_cols.length == table.columns())
+    {
+      JOptionPane.showMessageDialog(this,
+              "Cannot delete all column in the table",
+              "Delete error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    // parse the selected indexes for column removal
+    TableColumnModel model = main_table.getColumnModel();
+    for (int i = selected_cols.length - 1; i >= 0; i--)
+    {
+      // remove selected column
+      int index = selected_cols[i];
+      model.removeColumn(model.getColumn(index));
+      // shift back next columns by one position
+      for (int j = index; j < model.getColumnCount(); j++)
       {
-        JOptionPane.showMessageDialog(this,
-                "Column name(s) must be unique inside the table and "
-                + "cannot be empty.\n\n" + error_log,
-                "Invalid column name(s)",
-                JOptionPane.ERROR_MESSAGE);
-        return;
+        int currIndex = model.getColumn(j).getModelIndex();
+        model.getColumn(j).setModelIndex(currIndex - 1);
       }
-      // for each selected column change column name
-      columnName = rootName;
-      for (int i = 0; i < selected_cols.length; i++)
-      {
-        if (selected_cols.length != 1) columnName = rootName + (i + 1);
-        // change column name in the table and update TableColumnModel
-        table.setColumnName(selected_cols[i], columnName);
-        TableColumn column = main_table.getColumnModel()
-                .getColumn(selected_cols[i]);
-        column.setHeaderValue(columnName);
-      }
-      // update main table
-      main_table.getTableHeader().repaint();
-    }//GEN-LAST:event_col_renameActionPerformed
+      // remove selection and actual column from table
+      col_selectionModel.removeIndexInterval(index, index);
+      table.removeColumn(index);
+    }
+  }//GEN-LAST:event_col_deleteActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JRadioButtonMenuItem col_character;
@@ -753,7 +802,7 @@ public class TableHandler extends javax.swing.JPanel {
    */
   private void initToolBar() {
     // initialize table name label
-    tableNameLabel.setText(table.name());    
+    tableNameLabel.setText(table.name());
     // FIXME:for debug purpose, to be removed
     tableNameLabel.addMouseListener(new MouseListener() {
       @Override
