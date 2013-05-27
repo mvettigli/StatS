@@ -18,6 +18,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import stats.core.*;
 import static stats.core.DataType.*;
+import stats.gui.dialogs.DialogInsertCols;
 
 /**
  *
@@ -182,13 +183,19 @@ public class TableHandler extends javax.swing.JPanel {
 
     cols_PopUp = new javax.swing.JPopupMenu();
     col_rename = new javax.swing.JMenuItem();
+    col_insert = new javax.swing.JMenuItem();
+    col_delete = new javax.swing.JMenuItem();
+    col_separator = new javax.swing.JPopupMenu.Separator();
     col_type = new javax.swing.JMenu();
     col_character = new javax.swing.JRadioButtonMenuItem();
     col_numeric = new javax.swing.JRadioButtonMenuItem();
-    col_separator = new javax.swing.JPopupMenu.Separator();
-    col_insert = new javax.swing.JMenuItem();
-    col_delete = new javax.swing.JMenuItem();
     rows_PopUp = new javax.swing.JPopupMenu();
+    row_insert = new javax.swing.JMenuItem();
+    row_delete = new javax.swing.JMenuItem();
+    row_separator = new javax.swing.JPopupMenu.Separator();
+    row_color = new javax.swing.JMenu();
+    row_marker = new javax.swing.JMenu();
+    row_size = new javax.swing.JMenu();
     scrollPane = new javax.swing.JScrollPane();
     toolBar = new javax.swing.JToolBar();
     tableNameLabel = new javax.swing.JLabel();
@@ -202,6 +209,23 @@ public class TableHandler extends javax.swing.JPanel {
     });
     cols_PopUp.add(col_rename);
 
+    col_insert.setText("Insert");
+    col_insert.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        col_insertActionPerformed(evt);
+      }
+    });
+    cols_PopUp.add(col_insert);
+
+    col_delete.setText("Delete");
+    col_delete.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        col_deleteActionPerformed(evt);
+      }
+    });
+    cols_PopUp.add(col_delete);
+    cols_PopUp.add(col_separator);
+
     col_type.setText("Column type");
 
     col_character.setSelected(true);
@@ -213,18 +237,22 @@ public class TableHandler extends javax.swing.JPanel {
     col_type.add(col_numeric);
 
     cols_PopUp.add(col_type);
-    cols_PopUp.add(col_separator);
 
-    col_insert.setText("Insert");
-    cols_PopUp.add(col_insert);
+    row_insert.setText("Insert");
+    rows_PopUp.add(row_insert);
 
-    col_delete.setText("Delete");
-    col_delete.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        col_deleteActionPerformed(evt);
-      }
-    });
-    cols_PopUp.add(col_delete);
+    row_delete.setText("Delete");
+    rows_PopUp.add(row_delete);
+    rows_PopUp.add(row_separator);
+
+    row_color.setText("Color");
+    rows_PopUp.add(row_color);
+
+    row_marker.setText("Marker");
+    rows_PopUp.add(row_marker);
+
+    row_size.setText("Size");
+    rows_PopUp.add(row_size);
 
     tableNameLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
     tableNameLabel.setText("Table name");
@@ -236,14 +264,14 @@ public class TableHandler extends javax.swing.JPanel {
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(scrollPane)
-      .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+      .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
+        .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -354,6 +382,108 @@ public class TableHandler extends javax.swing.JPanel {
     }
   }//GEN-LAST:event_col_deleteActionPerformed
 
+  private void col_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_insertActionPerformed
+    // get selected columns and check for empty selection
+    int[] selected_cols = getSelectedColumns();
+    if (selected_cols.length == 0)
+      throw new IllegalArgumentException("Empty column selection.");
+    // create a dialog for column insertion
+    JFrame frame = (JFrame) SwingUtilities.getRoot(this);
+    DialogInsertCols dialog = new DialogInsertCols(frame, true);
+    dialog.setLocationRelativeTo(frame);
+    // show the dialog and exit if operation is aborted
+    if (!dialog.showDialog()) return;
+
+    // define variable for convenience
+    TableColumnModel model = main_table.getColumnModel();
+    String name = dialog.getColumnName();
+    int number = dialog.getColumnNumber();
+    DataType type = dialog.getColumnType();
+
+    // check if the names of the new columns are valid
+    boolean error_state = true;
+    String error_log = new String();
+    // for each name check its validity in the table object
+    for (int i = 0; i < selected_cols.length; i++)
+      for (int j = 0; j < number; j++)
+      {
+        String columnName = name
+                + ((selected_cols.length != 1) ? (i + 1) : "")
+                + ((number != 1) ? (j + 1) : "");
+        if (!table.isColumnNameValid(columnName))
+        {
+          error_log += "ERROR: " + (columnName.isEmpty()
+                  ? "Empty name" : "\"" + columnName + "\"\n");
+          error_state = false;
+        }
+      }
+    if (!error_state)
+    {
+      JOptionPane.showMessageDialog(this,
+              "Column name(s) must be unique inside the table and "
+              + "cannot be empty.\n\n" + error_log,
+              "Invalid column name(s)",
+              JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+
+    // based on insertion position modify the selection  
+    int[] selection = new int[1];
+    switch (dialog.getColumnPosition())
+    {
+      case DialogInsertCols.POSITION_BEGIN:
+        selection[0] = 0;
+        selected_cols = selection;
+        break;
+      case DialogInsertCols.POSITION_END:
+        selection[0] = model.getColumnCount();
+        selected_cols = selection;
+        break;
+      case DialogInsertCols.POSITION_AFTER:
+        for (int i = 0; i < selected_cols.length; i++)
+          selected_cols[i] += 1;
+      case DialogInsertCols.POSITION_BEFORE:
+      default:
+    }
+    // insert the columns
+    for (int i = 0; i < selected_cols.length; i++)
+    {
+      int index = selected_cols[i];
+      // insert and rename columns in the table
+      if (index == table.columns()) table.addColumns(type, number);
+      else table.insertColumns(index, type, number);
+      for (int j = 0; j < number; j++)
+        table.setColumnName(index + j, name
+                + ((selected_cols.length != 1) ? (i + 1) : "")
+                + ((number != 1) ? (j + 1) : ""));
+      // shift all next columns forward by n positions
+      for (int j = 0; j < model.getColumnCount(); j++)
+      {
+        int currIndex = model.getColumn(j).getModelIndex();
+        if (currIndex >= index)
+          model.getColumn(j).setModelIndex(currIndex + number);
+      }
+      // add columns to JTable object
+      for (int j = 0; j < number; j++)
+      {
+        TableColumn tableColumn = new TableColumn();
+        tableColumn.setModelIndex(index + j);
+        tableColumn.setHeaderValue(table.getColumnName(index + j));
+        model.addColumn(tableColumn);
+        // the model adds columns at the end of the table with right 
+        // model index, they must be moved to the correct position
+        model.moveColumn(model.getColumnCount() - 1, index + j);
+      }
+      // update next selected index
+      if (i != selected_cols.length - 1)
+        selected_cols[i + 1] += number * (i + 1);
+    }
+
+    // update table column model of main table
+
+
+  }//GEN-LAST:event_col_insertActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JRadioButtonMenuItem col_character;
   private javax.swing.JMenuItem col_delete;
@@ -363,6 +493,12 @@ public class TableHandler extends javax.swing.JPanel {
   private javax.swing.JPopupMenu.Separator col_separator;
   private javax.swing.JMenu col_type;
   private javax.swing.JPopupMenu cols_PopUp;
+  private javax.swing.JMenu row_color;
+  private javax.swing.JMenuItem row_delete;
+  private javax.swing.JMenuItem row_insert;
+  private javax.swing.JMenu row_marker;
+  private javax.swing.JPopupMenu.Separator row_separator;
+  private javax.swing.JMenu row_size;
   private javax.swing.JPopupMenu rows_PopUp;
   private javax.swing.JScrollPane scrollPane;
   private javax.swing.JLabel tableNameLabel;
@@ -468,6 +604,53 @@ public class TableHandler extends javax.swing.JPanel {
         else cell.setBackground(header_unselected_color);
         // returns the newly created label
         return cell;
+      }
+    });
+    row_table.addMouseListener(new MouseListener() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        // manage popup call
+        if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1)
+        {
+          // get the index of clicked row
+          int rowIndex = row_table.rowAtPoint(e.getPoint());
+          // manage click on null row
+          if (rowIndex == -1) return;
+          // manage popup call
+          if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1)
+          {
+            // if clicked row is not selected set it as unique selection
+            if (!row_selectionModel.isSelectedIndex(rowIndex))
+            {
+              row_selectionModel.clearSelection();
+              row_selectionModel.addSelectionInterval(rowIndex, rowIndex);
+            }
+            // set menu item enable state
+            row_insert.setEnabled(isEditable);
+            row_delete.setEnabled(isEditable);
+            row_color.setEnabled(true);
+            row_marker.setEnabled(true);
+            row_size.setEnabled(true);
+            // show the row popup
+            rows_PopUp.show(row_table, e.getX(), e.getY());
+          }
+        }
+      }
+
+      @Override
+      public void mousePressed(MouseEvent e) {
+      }
+
+      @Override
+      public void mouseReleased(MouseEvent e) {
+      }
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
       }
     });
   }

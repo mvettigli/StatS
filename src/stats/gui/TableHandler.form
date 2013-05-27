@@ -16,6 +16,24 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_renameActionPerformed"/>
           </Events>
         </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="col_insert">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Insert"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_insertActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="col_delete">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Delete"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_deleteActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="col_separator">
+        </Component>
         <Menu class="javax.swing.JMenu" name="col_type">
           <Properties>
             <Property name="text" type="java.lang.String" value="Column type"/>
@@ -35,21 +53,6 @@
             </MenuItem>
           </SubComponents>
         </Menu>
-        <Component class="javax.swing.JPopupMenu$Separator" name="col_separator">
-        </Component>
-        <MenuItem class="javax.swing.JMenuItem" name="col_insert">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Insert"/>
-          </Properties>
-        </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="col_delete">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Delete"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_deleteActionPerformed"/>
-          </Events>
-        </MenuItem>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPopupMenu" name="rows_PopUp">
@@ -57,6 +60,35 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="row_insert">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Insert"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="row_delete">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Delete"/>
+          </Properties>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="row_separator">
+        </Component>
+        <Menu class="javax.swing.JMenu" name="row_color">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Color"/>
+          </Properties>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="row_marker">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Marker"/>
+          </Properties>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="row_size">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Size"/>
+          </Properties>
+        </Menu>
+      </SubComponents>
     </Container>
   </NonVisualComponents>
   <AuxValues>
@@ -75,7 +107,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="scrollPane" max="32767" attributes="0"/>
-          <Component id="toolBar" alignment="0" pref="425" max="32767" attributes="0"/>
+          <Component id="toolBar" alignment="0" pref="251" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -83,7 +115,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="toolBar" min="-2" pref="25" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="scrollPane" pref="327" max="32767" attributes="0"/>
+              <Component id="scrollPane" pref="165" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
