@@ -22,7 +22,7 @@ public class Table {
 /**
  * Unique identifier for column naming.
  */
-private static int untitled_column = 1;
+private int untitled_column;
 
 /**
  * Unique identifier for table naming.
@@ -60,7 +60,7 @@ private ArrayList<Array> columns;
  * with untitled name and one {@code DataType.CHARACTER} column of 10 rows.
  */
 public Table() {
-    this(newUntitledName());
+    this(newUntitledName());  
 }
 
 /**
@@ -70,8 +70,10 @@ public Table() {
  * @param name the name of the table.
  */
 public Table(String name) {
+    
     // initialize column array with a single Array 
     // of DEFAULT_ROWS Characher elements
+    untitled_column = 1;
     columns = new ArrayList<>();
     Array first_column = new Array(this.getUntitledColumn());
     first_column.add(new Character());
@@ -80,6 +82,7 @@ public Table(String name) {
     // initialize table_rows and table_cols
     table_cols = 1;
     table_rows = DEFAULT_ROWS;
+    
     // initialize table_name
     if (name.isEmpty())
     {

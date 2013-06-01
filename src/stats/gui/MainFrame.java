@@ -4,7 +4,10 @@
  */
 package stats.gui;
 
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import javax.swing.JList;
+import stats.core.Table;
 
 /**
  *
@@ -17,6 +20,9 @@ public class MainFrame extends javax.swing.JFrame {
    */
   public MainFrame() {
     initComponents();
+    
+    frames = new ArrayList<>();
+    
     setIconImage(new ImageIcon(getClass().getResource(
             "/stats/gui/images/main.png")).getImage());
   }
@@ -30,36 +36,98 @@ public class MainFrame extends javax.swing.JFrame {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    tableHandler1 = new stats.gui.TableHandler();
-    jMenuBar1 = new javax.swing.JMenuBar();
+    toolPane = new javax.swing.JToolBar();
+    splitPane = new javax.swing.JSplitPane();
+    lateralPane = new javax.swing.JPanel();
+    tabbedPane = new javax.swing.JTabbedPane();
+    statusBar = new javax.swing.JPanel();
+    menuBar = new javax.swing.JMenuBar();
     jMenu1 = new javax.swing.JMenu();
+    menu_newTable = new javax.swing.JMenuItem();
     jMenu2 = new javax.swing.JMenu();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("StatS - STatistical Analysis ToolS");
     setFocusable(false);
 
+    toolPane.setFloatable(false);
+    toolPane.setRollover(true);
+
+    splitPane.setDividerLocation(150);
+    splitPane.setDividerSize(2);
+
+    javax.swing.GroupLayout lateralPaneLayout = new javax.swing.GroupLayout(lateralPane);
+    lateralPane.setLayout(lateralPaneLayout);
+    lateralPaneLayout.setHorizontalGroup(
+      lateralPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 149, Short.MAX_VALUE)
+    );
+    lateralPaneLayout.setVerticalGroup(
+      lateralPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 530, Short.MAX_VALUE)
+    );
+
+    splitPane.setLeftComponent(lateralPane);
+    splitPane.setRightComponent(tabbedPane);
+
+    javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
+    statusBar.setLayout(statusBarLayout);
+    statusBarLayout.setHorizontalGroup(
+      statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 0, Short.MAX_VALUE)
+    );
+    statusBarLayout.setVerticalGroup(
+      statusBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGap(0, 22, Short.MAX_VALUE)
+    );
+
     jMenu1.setText("File");
-    jMenuBar1.add(jMenu1);
+
+    menu_newTable.setText("New table");
+    menu_newTable.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menu_newTableActionPerformed(evt);
+      }
+    });
+    jMenu1.add(menu_newTable);
+
+    menuBar.add(jMenu1);
 
     jMenu2.setText("Edit");
-    jMenuBar1.add(jMenu2);
+    menuBar.add(jMenu2);
 
-    setJMenuBar(jMenuBar1);
+    setJMenuBar(menuBar);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(tableHandler1, javax.swing.GroupLayout.DEFAULT_SIZE, 744, Short.MAX_VALUE)
+      .addComponent(statusBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(toolPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(tableHandler1, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+      .addGroup(layout.createSequentialGroup()
+        .addComponent(toolPane, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(splitPane)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(statusBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void menu_newTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_newTableActionPerformed
+    // TODO add your handling code here:    
+    Table table = new Table();
+    TableHandler tablehandler = new TableHandler(table, true);
+    TabFrame tabframe = new TabFrame(tablehandler, new ImageIcon(
+            getClass().getResource("/stats/gui/images/table.png")));
+    frames.add(tabframe);
+    tabbedPane.addTab(table.name(), tabframe.getIcon(), tabframe.getPanel());    
+  }//GEN-LAST:event_menu_newTableActionPerformed
 
   /**
    * @param args the command line arguments
@@ -105,7 +173,15 @@ public class MainFrame extends javax.swing.JFrame {
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JMenu jMenu1;
   private javax.swing.JMenu jMenu2;
-  private javax.swing.JMenuBar jMenuBar1;
-  private stats.gui.TableHandler tableHandler1;
+  private javax.swing.JPanel lateralPane;
+  private javax.swing.JMenuBar menuBar;
+  private javax.swing.JMenuItem menu_newTable;
+  private javax.swing.JSplitPane splitPane;
+  private javax.swing.JPanel statusBar;
+  private javax.swing.JTabbedPane tabbedPane;
+  private javax.swing.JToolBar toolPane;
   // End of variables declaration//GEN-END:variables
+
+  private ArrayList<TabFrame> frames;
+
 }

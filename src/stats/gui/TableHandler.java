@@ -89,10 +89,15 @@ public class TableHandler extends javax.swing.JPanel {
   private static Color cell_shaded_color = new Color(191, 239, 255);
 
   /**
+   * Storage variable for width of lateral pane.
+   */
+  private int lateralPaneWidth;
+
+  /**
    * Default constructor for creating new TableHandler form.
    */
   public TableHandler() {
-    this(new Table(), true);   // FIXME: default is false, to be changed
+    this(new Table(), false);
   }
 
   /**
@@ -114,6 +119,7 @@ public class TableHandler extends javax.swing.JPanel {
     initMainTable();
     initScrollPane();
     initToolBar();
+    initLateralPane();
   }
 
   /**
@@ -193,10 +199,16 @@ public class TableHandler extends javax.swing.JPanel {
     row_color = new javax.swing.JMenu();
     row_marker = new javax.swing.JMenu();
     row_size = new javax.swing.JMenu();
-    scrollPane = new javax.swing.JScrollPane();
     toolBar = new javax.swing.JToolBar();
-    tableNameLabel = new javax.swing.JLabel();
-    toolBarFiller = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+    buttonSidePane = new javax.swing.JButton();
+    jSeparator1 = new javax.swing.JToolBar.Separator();
+    splitMain = new javax.swing.JSplitPane();
+    scrollPane = new javax.swing.JScrollPane();
+    splitLateral = new javax.swing.JSplitPane();
+    scrollColumns = new javax.swing.JScrollPane();
+    listColumns = new javax.swing.JList();
+    scrollRows = new javax.swing.JScrollPane();
+    listRows = new javax.swing.JList();
 
     col_rename.setText("Rename");
     col_rename.addActionListener(new java.awt.event.ActionListener() {
@@ -261,24 +273,60 @@ public class TableHandler extends javax.swing.JPanel {
     row_size.setText("Size");
     rows_PopUp.add(row_size);
 
-    tableNameLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-    tableNameLabel.setText("Table name");
-    toolBar.add(tableNameLabel);
-    toolBar.add(toolBarFiller);
+    toolBar.setFloatable(false);
+
+    buttonSidePane.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stats/gui/images/application_side_boxes.png"))); // NOI18N
+    buttonSidePane.setToolTipText("Show/hide lateral pane");
+    buttonSidePane.setFocusable(false);
+    buttonSidePane.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    buttonSidePane.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    buttonSidePane.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonSidePaneActionPerformed(evt);
+      }
+    });
+    toolBar.add(buttonSidePane);
+    toolBar.add(jSeparator1);
+
+    splitMain.setBorder(null);
+    splitMain.setDividerLocation(100);
+    splitMain.setDividerSize(2);
+
+    scrollPane.setBorder(null);
+    splitMain.setRightComponent(scrollPane);
+
+    splitLateral.setBorder(null);
+    splitLateral.setDividerLocation(100);
+    splitLateral.setDividerSize(2);
+    splitLateral.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+    splitLateral.setResizeWeight(0.5);
+    splitLateral.setMinimumSize(new java.awt.Dimension(0, 0));
+
+    scrollColumns.setBorder(javax.swing.BorderFactory.createTitledBorder("Columns"));
+    scrollColumns.setViewportView(listColumns);
+
+    splitLateral.setTopComponent(scrollColumns);
+
+    scrollRows.setBorder(javax.swing.BorderFactory.createTitledBorder("Rows"));
+    scrollRows.setViewportView(listRows);
+
+    splitLateral.setRightComponent(scrollRows);
+
+    splitMain.setLeftComponent(splitLateral);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(scrollPane)
-      .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+      .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+      .addComponent(splitMain)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
+        .addComponent(splitMain, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -342,8 +390,9 @@ public class TableHandler extends javax.swing.JPanel {
               .getColumn(selected_cols[i]);
       column.setHeaderValue(columnName);
     }
-    // update main table
-    main_table.getTableHeader().repaint();
+    // update main table and column list
+    main_table.getTableHeader().updateUI();
+    listColumns.updateUI();
   }//GEN-LAST:event_col_renameActionPerformed
 
   /**
@@ -370,13 +419,11 @@ public class TableHandler extends javax.swing.JPanel {
     dialog.setLocationRelativeTo(mainFrame);
     // show the dialog and exit if operation is aborted
     if (!dialog.showDialog()) return;
-
     // define variable for convenience
     TableColumnModel model = main_table.getColumnModel();
     String rootName = dialog.getColumnName();
     int number = dialog.getColumnNumber();
     DataType type = dialog.getColumnType();
-
     // check if the names of the new columns are valid
     boolean error_state = true;
     String error_log = new String();
@@ -462,6 +509,8 @@ public class TableHandler extends javax.swing.JPanel {
       if (i != selected_cols.length - 1)
         selected_cols[i + 1] += number * (i + 1);
     }
+    // update main table and column list    
+    listColumns.updateUI();
   }//GEN-LAST:event_col_insertActionPerformed
 
   /**
@@ -505,6 +554,8 @@ public class TableHandler extends javax.swing.JPanel {
       col_selectionModel.removeIndexInterval(index, index);
       table.removeColumn(index);
     }
+    // update column list
+    listColumns.updateUI();
   }//GEN-LAST:event_col_deleteActionPerformed
 
   /**
@@ -529,7 +580,7 @@ public class TableHandler extends javax.swing.JPanel {
     if (!dialog.showDialog()) return;
     // define variables for convenience
     int number = dialog.getRowNumber();
-    int position = dialog.getRowPosition();    
+    int position = dialog.getRowPosition();
     int[] new_selection = new int[1];
     // based on insertion position, modify selected indexes
     switch (position)
@@ -607,7 +658,27 @@ public class TableHandler extends javax.swing.JPanel {
     main_table.updateUI();
   }//GEN-LAST:event_row_deleteActionPerformed
 
+  /**
+   * Handles lateral panel visibility. The lateral panel is shown or hidden
+   * based on its current state. When user hides the pane, its width is store
+   * in the local variable {@code lateralPaneWidth}. This variable is used to
+   * restore panel width when user set it visible.
+   *
+   * @param evt the action event.
+   */
+  private void buttonSidePaneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSidePaneActionPerformed
+    // check if the side panel is already hidden and hide/show it
+    if (splitMain.getDividerLocation() != 0)
+    {
+      // store the current width in the local variable
+      lateralPaneWidth = splitMain.getDividerLocation();
+      splitMain.setDividerLocation(0);
+      // restore the width of the lateral panel
+    } else splitMain.setDividerLocation(lateralPaneWidth);
+  }//GEN-LAST:event_buttonSidePaneActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton buttonSidePane;
   private javax.swing.JRadioButtonMenuItem col_character;
   private javax.swing.JMenuItem col_delete;
   private javax.swing.JMenuItem col_insert;
@@ -616,6 +687,9 @@ public class TableHandler extends javax.swing.JPanel {
   private javax.swing.JPopupMenu.Separator col_separator;
   private javax.swing.JMenu col_type;
   private javax.swing.JPopupMenu cols_PopUp;
+  private javax.swing.JToolBar.Separator jSeparator1;
+  private javax.swing.JList listColumns;
+  private javax.swing.JList listRows;
   private javax.swing.JMenu row_color;
   private javax.swing.JMenuItem row_delete;
   private javax.swing.JMenuItem row_insert;
@@ -623,10 +697,12 @@ public class TableHandler extends javax.swing.JPanel {
   private javax.swing.JPopupMenu.Separator row_separator;
   private javax.swing.JMenu row_size;
   private javax.swing.JPopupMenu rows_PopUp;
+  private javax.swing.JScrollPane scrollColumns;
   private javax.swing.JScrollPane scrollPane;
-  private javax.swing.JLabel tableNameLabel;
+  private javax.swing.JScrollPane scrollRows;
+  private javax.swing.JSplitPane splitLateral;
+  private javax.swing.JSplitPane splitMain;
   private javax.swing.JToolBar toolBar;
-  private javax.swing.Box.Filler toolBarFiller;
   // End of variables declaration//GEN-END:variables
 
   /**
@@ -910,6 +986,8 @@ public class TableHandler extends javax.swing.JPanel {
               tableColumn.setHeaderValue(table.getColumnName(index));
               main_table.addColumn(tableColumn);
             }
+            // update column list
+            listColumns.updateUI();
           }
           // this return statement prevents improper usage of null index
           return;
@@ -1107,29 +1185,88 @@ public class TableHandler extends javax.swing.JPanel {
    * Initializes the tool bar.
    */
   private void initToolBar() {
-    // initialize table name label
-    tableNameLabel.setText(table.name());
-    // FIXME:for debug purpose, to be removed
-    tableNameLabel.addMouseListener(new MouseListener() {
+    // TODO: to be implemented.
+  }
+
+  /**
+   * Initializes the lateral panel.
+   */
+  private void initLateralPane() {
+    // initialize lateral pane width
+    lateralPaneWidth = 100;
+    // set model and selection model of columns list
+    listColumns.setSelectionModel(col_selectionModel);
+    listColumns.setModel(new ListModel() {
+      /**
+       * Returns the number of columns in the Table object.
+       */
       @Override
-      public void mouseClicked(MouseEvent e) {
-        System.out.println(table);
+      public int getSize() {
+        return table.columns();
       }
 
+      /**
+       * Returns the column name at index-th position. The method is not
+       * actually used to generate and output. The element content is rendered
+       * through ListCellRenderer.
+       */
       @Override
-      public void mousePressed(MouseEvent e) {
+      public Object getElementAt(int index) {
+        return null;
       }
 
+      /**
+       * Method not implemented.
+       */
       @Override
-      public void mouseReleased(MouseEvent e) {
+      public void addListDataListener(ListDataListener l) {
       }
 
+      /**
+       * Method not implemented.
+       */
       @Override
-      public void mouseEntered(MouseEvent e) {
+      public void removeListDataListener(ListDataListener l) {
       }
-
+    });
+    listColumns.setSelectionModel(col_selectionModel);
+    // initialize default cell renderer of columns list
+    listColumns.setCellRenderer(new ListCellRenderer() {
+      /**
+       * The element of columns list is formatted. The formatting uses list
+       * index to point to index-th column in the table object, and selection
+       * state to render background.
+       */
       @Override
-      public void mouseExited(MouseEvent e) {
+      public Component getListCellRendererComponent(
+              JList list, Object value, int index,
+              boolean isSelected, boolean cellHasFocus) {
+        // create new label to represent list element
+        JLabel element = new JLabel();
+        element.setOpaque(true);
+        // set label text with column name
+        element.setText(table.getColumnName(index));
+        // set icon based on column type
+        String iconURL = new String();
+        switch (table.getColumnType(index))
+        {
+          case CHARACTER:
+            iconURL = "/stats/gui/images/character.png";
+            break;
+          case NUMERIC:
+            iconURL = "/stats/gui/images/numeric.png";
+            break;
+          case UNDEFINED:
+          default:
+        }
+        element.setIconTextGap(7);
+        element.setIcon(new ImageIcon(getClass().getResource(iconURL)));
+        // set background based on selection
+        element.setForeground(cell_forecolor);
+        if (isSelected) element.setBackground(cell_selected_color);
+        else element.setBackground(list.getBackground());
+        // return the newly created label
+        return element;
       }
     });
   }
