@@ -10,15 +10,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 import javax.swing.plaf.metal.MetalBorders;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import stats.core.*;
 import static stats.core.DataType.*;
-import stats.gui.dialogs.DialogInsertCols;
+import stats.gui.dialogs.*;
 
 /**
  *
@@ -239,9 +236,19 @@ public class TableHandler extends javax.swing.JPanel {
     cols_PopUp.add(col_type);
 
     row_insert.setText("Insert");
+    row_insert.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        row_insertActionPerformed(evt);
+      }
+    });
     rows_PopUp.add(row_insert);
 
     row_delete.setText("Delete");
+    row_delete.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        row_deleteActionPerformed(evt);
+      }
+    });
     rows_PopUp.add(row_delete);
     rows_PopUp.add(row_separator);
 
@@ -340,6 +347,124 @@ public class TableHandler extends javax.swing.JPanel {
   }//GEN-LAST:event_col_renameActionPerformed
 
   /**
+   * Handles column insertion upon selection. Because the methods uses
+   * currently selected columns from {@code col_selectionModel}, an {@code
+   * IllegalArgumentException} will be thrown if selection is null. The
+   * insertion is performed based on column type, number and insertion position.
+   * When multiple selection or number of columns is present, the name of the
+   * columns is built using the root name given by the user, followed by
+   * (one or two) indexes. If the names of the column to be inserted is not
+   * valid, the operation is aborted.
+   *
+   * @param evt the action event.
+   * @throws IllegalArgumentException if no column is selected.
+   */
+  private void col_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_insertActionPerformed
+    // get selected columns and check for empty selection
+    int[] selected_cols = getSelectedColumns();
+    if (selected_cols.length == 0) throw new IllegalArgumentException(
+              "Empty column selection.");
+    // create a dialog for column insertion
+    JFrame mainFrame = (JFrame) SwingUtilities.getRoot(this);
+    DialogInsertCols dialog = new DialogInsertCols(mainFrame, true);
+    dialog.setLocationRelativeTo(mainFrame);
+    // show the dialog and exit if operation is aborted
+    if (!dialog.showDialog()) return;
+
+    // define variable for convenience
+    TableColumnModel model = main_table.getColumnModel();
+    String rootName = dialog.getColumnName();
+    int number = dialog.getColumnNumber();
+    DataType type = dialog.getColumnType();
+
+    // check if the names of the new columns are valid
+    boolean error_state = true;
+    String error_log = new String();
+    // for each column name to be inserted,
+    // check its validity in the table object
+    for (int i = 0; i < selected_cols.length; i++)
+      for (int j = 0; j < number; j++)
+      {
+        String columnName = rootName
+                + ((selected_cols.length != 1) ? (i + 1) : "")
+                + ((number != 1) ? (j + 1) : "");
+        if (!table.isColumnNameValid(columnName))
+        {
+          error_log += "ERROR: " + (columnName.isEmpty()
+                  ? "Empty name" : "\"" + columnName + "\"\n");
+          error_state = false;
+        }
+      }
+    // show an error message with a log 
+    // reporting all invalid column names
+    if (!error_state)
+    {
+      JOptionPane.showMessageDialog(this,
+              "Column name(s) must be unique inside the table and "
+              + "cannot be empty.\n\n" + error_log,
+              "Invalid column name(s)",
+              JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    // based on insertion position modify the selection  
+    int[] newSelection = new int[1];
+    col_selectionModel.clearSelection();
+    switch (dialog.getColumnPosition())
+    {
+      case DialogInsertCols.POSITION_BEGIN:
+        newSelection[0] = 0;
+        selected_cols = newSelection;
+        break;
+      case DialogInsertCols.POSITION_END:
+        newSelection[0] = model.getColumnCount();
+        selected_cols = newSelection;
+        break;
+      case DialogInsertCols.POSITION_AFTER:
+        for (int i = 0; i < selected_cols.length; i++)
+          selected_cols[i] += 1;
+      case DialogInsertCols.POSITION_BEFORE:
+      default:
+    }
+    // insert the columns 
+    for (int i = 0; i < selected_cols.length; i++)
+    {
+      int index = selected_cols[i];
+      // insert and rename columns in the Table object
+      if (index == table.columns()) table.addColumns(type, number);
+      else table.insertColumns(index, type, number);
+      for (int j = 0; j < number; j++)
+        table.setColumnName(index + j, rootName
+                + ((selected_cols.length != 1) ? (i + 1) : "")
+                + ((number != 1) ? (j + 1) : ""));
+      // shift all next columns forward by n positions
+      for (int j = 0; j < model.getColumnCount(); j++)
+      {
+        int currIndex = model.getColumn(j).getModelIndex();
+        if (currIndex >= index)
+          model.getColumn(j).setModelIndex(currIndex + number);
+      }
+      // add columns to JTable object
+      for (int j = 0; j < number; j++)
+      {
+        TableColumn tableColumn = new TableColumn();
+        tableColumn.setModelIndex(index + j);
+        tableColumn.setHeaderValue(table.getColumnName(index + j));
+        model.addColumn(tableColumn);
+        // the model adds columns at the end of the table with defined
+        // model index, they must be moved to the correct position
+        model.moveColumn(model.getColumnCount() - 1, index + j);
+      }
+      // select newly created columns
+      col_selectionModel.addSelectionInterval(
+              selected_cols[i],
+              selected_cols[i] + number - 1);
+      // update next selected index to shift the selection
+      if (i != selected_cols.length - 1)
+        selected_cols[i + 1] += number * (i + 1);
+    }
+  }//GEN-LAST:event_col_insertActionPerformed
+
+  /**
    * Handles column removal upon selection. Because the methods uses
    * currently selected columns from {@code col_selectionModel}, an {@code
    * IllegalArgumentException} will be thrown if selection is null. At least
@@ -382,107 +507,105 @@ public class TableHandler extends javax.swing.JPanel {
     }
   }//GEN-LAST:event_col_deleteActionPerformed
 
-  private void col_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_insertActionPerformed
-    // get selected columns and check for empty selection
-    int[] selected_cols = getSelectedColumns();
-    if (selected_cols.length == 0)
-      throw new IllegalArgumentException("Empty column selection.");
-    // create a dialog for column insertion
-    JFrame frame = (JFrame) SwingUtilities.getRoot(this);
-    DialogInsertCols dialog = new DialogInsertCols(frame, true);
-    dialog.setLocationRelativeTo(frame);
+  /**
+   * Handles row insertion upon selection. Because the methods uses currently
+   * selected rows from {@code row_selectionModel}, an {@code
+   * IllegalArgumentException} will be thrown if selection is null. The
+   * insertion is performed based on number and insertion position.
+   *
+   * @param evt the action event.
+   * @throws IllegalArgumentException if no row is selected.
+   */
+  private void row_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_row_insertActionPerformed
+    // check if row selection is null
+    int[] selected_rows = getSelectedRows();
+    if (selected_rows.length == 0) throw new IllegalArgumentException(
+              "Empty row selection");
+    //
+    JFrame mainFrame = (JFrame) SwingUtilities.getRoot(this);
+    DialogInsertRows dialog = new DialogInsertRows(mainFrame, true);
+    dialog.setLocationRelativeTo(mainFrame);
     // show the dialog and exit if operation is aborted
     if (!dialog.showDialog()) return;
-
-    // define variable for convenience
-    TableColumnModel model = main_table.getColumnModel();
-    String name = dialog.getColumnName();
-    int number = dialog.getColumnNumber();
-    DataType type = dialog.getColumnType();
-
-    // check if the names of the new columns are valid
-    boolean error_state = true;
-    String error_log = new String();
-    // for each name check its validity in the table object
-    for (int i = 0; i < selected_cols.length; i++)
-      for (int j = 0; j < number; j++)
-      {
-        String columnName = name
-                + ((selected_cols.length != 1) ? (i + 1) : "")
-                + ((number != 1) ? (j + 1) : "");
-        if (!table.isColumnNameValid(columnName))
-        {
-          error_log += "ERROR: " + (columnName.isEmpty()
-                  ? "Empty name" : "\"" + columnName + "\"\n");
-          error_state = false;
-        }
-      }
-    if (!error_state)
+    // define variables for convenience
+    int number = dialog.getRowNumber();
+    int position = dialog.getRowPosition();    
+    int[] new_selection = new int[1];
+    // based on insertion position, modify selected indexes
+    switch (position)
     {
-      JOptionPane.showMessageDialog(this,
-              "Column name(s) must be unique inside the table and "
-              + "cannot be empty.\n\n" + error_log,
-              "Invalid column name(s)",
-              JOptionPane.ERROR_MESSAGE);
-      return;
-    }
-
-    // based on insertion position modify the selection  
-    int[] selection = new int[1];
-    switch (dialog.getColumnPosition())
-    {
-      case DialogInsertCols.POSITION_BEGIN:
-        selection[0] = 0;
-        selected_cols = selection;
+      case DialogInsertRows.POSITION_BEGIN:
+        new_selection[0] = 0;
+        selected_rows = new_selection;
         break;
-      case DialogInsertCols.POSITION_END:
-        selection[0] = model.getColumnCount();
-        selected_cols = selection;
+      case DialogInsertRows.POSITION_END:
+        new_selection[0] = table.rows();
+        selected_rows = new_selection;
         break;
-      case DialogInsertCols.POSITION_AFTER:
-        for (int i = 0; i < selected_cols.length; i++)
-          selected_cols[i] += 1;
-      case DialogInsertCols.POSITION_BEFORE:
+      case DialogInsertRows.POSITION_AFTER:
+        for (int i = 0; i < selected_rows.length; i++)
+          selected_rows[i] += 1;
+      case DialogInsertRows.POSITION_BEFORE:
       default:
     }
-    // insert the columns
-    for (int i = 0; i < selected_cols.length; i++)
+    // clear row selection and insert new rows
+    row_selectionModel.clearSelection();
+    for (int i = 0; i < selected_rows.length; i++)
     {
-      int index = selected_cols[i];
-      // insert and rename columns in the table
-      if (index == table.columns()) table.addColumns(type, number);
-      else table.insertColumns(index, type, number);
-      for (int j = 0; j < number; j++)
-        table.setColumnName(index + j, name
-                + ((selected_cols.length != 1) ? (i + 1) : "")
-                + ((number != 1) ? (j + 1) : ""));
-      // shift all next columns forward by n positions
-      for (int j = 0; j < model.getColumnCount(); j++)
-      {
-        int currIndex = model.getColumn(j).getModelIndex();
-        if (currIndex >= index)
-          model.getColumn(j).setModelIndex(currIndex + number);
-      }
-      // add columns to JTable object
-      for (int j = 0; j < number; j++)
-      {
-        TableColumn tableColumn = new TableColumn();
-        tableColumn.setModelIndex(index + j);
-        tableColumn.setHeaderValue(table.getColumnName(index + j));
-        model.addColumn(tableColumn);
-        // the model adds columns at the end of the table with right 
-        // model index, they must be moved to the correct position
-        model.moveColumn(model.getColumnCount() - 1, index + j);
-      }
-      // update next selected index
-      if (i != selected_cols.length - 1)
-        selected_cols[i + 1] += number * (i + 1);
+      // insert rows in the Table object
+      if (selected_rows[i] != table.rows())
+        table.insertRows(selected_rows[i], number);
+      else table.addRows(number);
+      // select newly created rows
+      row_selectionModel.addSelectionInterval(
+              selected_rows[i],
+              selected_rows[i] + number - 1);
+      // update next selected index to shift the selection
+      if (i != selected_rows.length - 1)
+        selected_rows[i + 1] += number * (i + 1);
     }
+    // repaint components
+    row_table.updateUI();
+    main_table.updateUI();
+  }//GEN-LAST:event_row_insertActionPerformed
 
-    // update table column model of main table
-
-
-  }//GEN-LAST:event_col_insertActionPerformed
+  /**
+   * Handles row removal upon selection. Because the methods uses currently
+   * selected rows from {@code row_selectionModel}, an {@code
+   * IllegalArgumentException} will be thrown if selection is null. At least
+   * one row must be present in the table, if user attempts to remove all rows,
+   * the operation will be aborted. At the end of the operation the row
+   * selection will be cleared.
+   *
+   * @param evt the action event.
+   * @throws IllegalArgumentException if no row is selected.
+   */
+  private void row_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_row_deleteActionPerformed
+    // check if row selection is null
+    int[] selected_rows = getSelectedRows();
+    if (selected_rows.length == 0) throw new IllegalArgumentException(
+              "Empty row selection");
+    // check if at least one row remains in the table
+    if (selected_rows.length == table.rows())
+    {
+      JOptionPane.showMessageDialog(this,
+              "Cannot delete all rows in the table",
+              "Delete error", JOptionPane.ERROR_MESSAGE);
+      return;
+    }
+    // remove rows from the Table object
+    for (int i = 0; i < selected_rows.length; i++)
+    {
+      table.removeRow(selected_rows[i]);
+      // shift backward the next selection
+      if (i != selected_rows.length - 1)
+        selected_rows[i + 1] -= i + 1;
+    }
+    // clear row selection and repaint components
+    row_selectionModel.clearSelection();
+    row_table.updateUI();
+    main_table.updateUI();
+  }//GEN-LAST:event_row_deleteActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JRadioButtonMenuItem col_character;

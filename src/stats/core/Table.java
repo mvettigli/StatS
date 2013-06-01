@@ -510,8 +510,8 @@ public boolean removeRows(int row, int number) {
     // check if number is valid
     if (number < 1) return false;
     // check if there are enough rows to be deleted
-    if (row + number >= table_rows) return false;
-    if (table_rows < number) return false;
+    if (row + number > table_rows) return false;
+    if (table_rows <= number) return false;
     // remove the elements for each column
     for (int i = 0; i < table_cols; i++)
         for (int j = 0; j < number; j++)

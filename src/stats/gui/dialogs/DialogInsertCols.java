@@ -30,14 +30,6 @@ public class DialogInsertCols extends javax.swing.JDialog {
     super(parent, modal);
     initComponents();
     dialog_result = false;
-    // set column type combobox 
-    combo_type.addItem("Character");
-    combo_type.addItem("Numeric");
-    combo_type.setSelectedItem("Character");
-    // set number spinner 
-    spinner_number.setValue(1);
-    // TODO: implement minimum value to 1       
-
   }
 
   /**
@@ -138,6 +130,10 @@ public class DialogInsertCols extends javax.swing.JDialog {
 
     radio_group.add(radio_end);
     radio_end.setText("end");
+
+    combo_type.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Character", "Numeric" }));
+
+    spinner_number.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
 
     label_header.setText("Insert name of new column(s)");
 
@@ -241,55 +237,6 @@ public class DialogInsertCols extends javax.swing.JDialog {
     dialog_result = false;
     this.dispose();
   }//GEN-LAST:event_button_cancelActionPerformed
-
-  /**
-   * @param args the command line arguments
-   */
-  public static void main(String args[]) {
-    /* Set the Nimbus look and feel */
-    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-     */
-    try
-    {
-      for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
-      {
-        if ("Nimbus".equals(info.getName()))
-        {
-          javax.swing.UIManager.setLookAndFeel(info.getClassName());
-          break;
-        }
-      }
-    } catch (ClassNotFoundException ex)
-    {
-      java.util.logging.Logger.getLogger(DialogInsertCols.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    } catch (InstantiationException ex)
-    {
-      java.util.logging.Logger.getLogger(DialogInsertCols.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    } catch (IllegalAccessException ex)
-    {
-      java.util.logging.Logger.getLogger(DialogInsertCols.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    } catch (javax.swing.UnsupportedLookAndFeelException ex)
-    {
-      java.util.logging.Logger.getLogger(DialogInsertCols.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    }
-    //</editor-fold>
-
-    /* Create and display the dialog */
-    java.awt.EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        DialogInsertCols dialog = new DialogInsertCols(new javax.swing.JFrame(), true);
-        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-          @Override
-          public void windowClosing(java.awt.event.WindowEvent e) {
-            System.exit(0);
-          }
-        });
-        dialog.setVisible(true);
-      }
-    });
-  }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton button_cancel;
