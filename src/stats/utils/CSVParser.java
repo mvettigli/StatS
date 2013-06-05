@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import stats.core.DataType;
 import stats.core.Table;
 
 /**
@@ -41,9 +42,7 @@ public class CSVParser {
    * Quote character, it is used to define the content of an element if
    * special character are used.
    */
-  private char quotechar;
-
-  private boolean strictQuotes;
+  private char quote;
 
   /**
    * Initial lines to be skipped before parsing.
@@ -54,13 +53,27 @@ public class CSVParser {
    * Row headers parsing status variable. When true, first row will be parsed
    * as column headers.
    */
-  private boolean parseRowHeaders;
+  private boolean parsingRowHeaders;
+
+  /**
+   * Strict quotes parsing status. When true, only elements within quote chars
+   * are parsed as valid content.
+   */
+  private boolean strictQuotes;
+
+  private boolean ignoreLeadingWhiteSpace;
+
+  /**
+   * Stores the current status of the cursor during parsing.
+   */
+  private boolean inField = false;
 
   private String pending;
 
-  private boolean inField = false;
-
-  private final boolean ignoreLeadingWhiteSpace;
+  /**
+   * The null character.
+   */
+  public static final char NULL_CHARACTER = '\0';
 
   /**
    * Default separator char.
@@ -76,13 +89,6 @@ public class CSVParser {
    * Default quote char.
    */
   public static final char DEFAULT_QUOTE_CHARACTER = '"';
-
-  /**
-   * Default strict quote char.
-   */
-  public static final boolean DEFAULT_STRICT_QUOTES = false;
-
-  public static final char NULL_CHARACTER = '\0';
 
   /**
    * Default constructor for CSVParser object. Constructs CSVParser using
@@ -122,7 +128,7 @@ public class CSVParser {
    * @param escape the character to use for escaping a separator or quote.
    */
   public CSVParser(char separator, char quotechar, char escape) {
-    this(separator, quotechar, escape, DEFAULT_STRICT_QUOTES);
+    this(separator, quotechar, escape, false);
   }
 
   /**
@@ -154,22 +160,52 @@ public class CSVParser {
   public CSVParser(char separator, char quotechar, char escape,
           boolean strictQuotes, boolean ignoreLeadingWhiteSpace) {
     // check if separator, quote and escape char are unique
-    if (isSameCharacter(separator, quotechar)
-            || isSameCharacter(separator, escape)
-            || isSameCharacter(quotechar, escape))
-      throw new UnsupportedOperationException(
-              "The separator, quote and escape characters must be different.");
+    if (areCharsUnique(separator, quotechar, escape))
+      throw new UnsupportedOperationException("The separator, quote and "
+              + "escape characters must be different.");
     // check if the separator is not defined
     if (separator == NULL_CHARACTER) throw new UnsupportedOperationException(
               "The separator character must be defined.");
     // assign all local variables
     this.separator = separator;
-    this.quotechar = quotechar;
+    this.quote = quotechar;
     this.escape = escape;
     this.strictQuotes = strictQuotes;
     this.ignoreLeadingWhiteSpace = ignoreLeadingWhiteSpace;
     this.linesToSkip = 0;
-    this.parseRowHeaders = true;
+    this.parsingRowHeaders = true;
+  }
+
+  public File getFile() {
+    return this.file;
+  }
+
+  public int getLinesToSkip() {
+    return linesToSkip;
+  }
+
+  public char getSeparatorChar() {
+    return this.separator;
+  }
+
+  public char getQuoteChar() {
+    return this.quote;
+  }
+
+  public char getEscapeChar() {
+    return this.escape;
+  }
+
+  public boolean getParseRowHeader() {
+    return this.parsingRowHeaders;
+  }
+
+  public boolean getStrictQuotes() {
+    return this.strictQuotes;
+  }
+
+  public boolean getIgnoreLeadingWhiteSpace() {
+    return this.ignoreLeadingWhiteSpace;
   }
 
   /**
@@ -189,10 +225,6 @@ public class CSVParser {
     return true;
   }
 
-  public void setParseRowHeader(boolean state) {
-    this.parseRowHeaders = state;
-  }
-
   public boolean setLinesToSkip(int lines) {
     // check if argument is negative
     if (lines < 0) return false;
@@ -201,16 +233,62 @@ public class CSVParser {
     return true;
   }
 
-  public File getFile() {
-    return this.file;
+  public boolean setSeparatorChar(char separator) {
+    if (!areCharsUnique(separator, this.quote, this.escape)) return false;
+    this.separator = separator;
+    return true;
   }
 
-  public boolean getParseRowHeader() {
-    return this.parseRowHeaders;
+  public boolean setQuoteChar(char quotechar) {
+    if (!areCharsUnique(this.separator, quotechar, this.escape)) return false;
+    this.quote = quotechar;
+    return true;
   }
 
-  public int getLinesToSkip() {
-    return linesToSkip;
+  public boolean setEscapeChar(char escape) {
+    if (!areCharsUnique(this.separator, this.quote, escape)) return false;
+    this.escape = escape;
+    return true;
+  }
+
+  public void setParsingRowHeader(boolean state) {
+    this.parsingRowHeaders = state;
+  }
+
+  public void setStrictQuotes(boolean state) {
+    this.strictQuotes = state;
+  }
+
+  public void setIgnoreLeadingWhiteSpace(boolean state) {
+    this.ignoreLeadingWhiteSpace = state;
+  }
+
+  public int parseNumberOfRows() throws IOException {
+    // initialize buffered reader
+    BufferedReader br = new BufferedReader(new FileReader(this.file));
+    // skip lines before counting
+    for (int i = 0; i < linesToSkip; i++)
+      br.readLine();
+    // count lines in the buffer
+    int rowCounter = 0;
+    while (br.readLine() != null)
+      rowCounter++;
+    br.close();
+    // don't consider first row if row header parsing is enabled
+    if (parsingRowHeaders) rowCounter--;
+    // return counted rows
+    return rowCounter;
+  }
+
+  public int parseNumberOfColumns() throws IOException {
+    // initialize buffered reader
+    BufferedReader br = new BufferedReader(new FileReader(this.file));
+    // skip lines before counting
+    for (int i = 0; i < linesToSkip; i++)
+      br.readLine();
+    // parse first line in the buffer and return number of tokens
+    String[] tokens = parseLine(br.readLine(), false);
+    return tokens.length;
   }
 
   public Table parseFile() throws IOException, ArrayIndexOutOfBoundsException {
@@ -229,11 +307,11 @@ public class CSVParser {
     // else fill first row
     for (int i = 0; i < firstLine.length; i++)
     {
-      if (this.parseRowHeaders) table.setColumnName(i, firstLine[i]);
+      if (this.parsingRowHeaders) table.setColumnName(i, firstLine[i]);
       else table.set(i, 0, firstLine[i]);
     }
     // initialize variables for convenience
-    int row = parseRowHeaders ? 0 : 1;
+    int row = parsingRowHeaders ? 0 : 1;
     String[] tokens;
     // parse remaining line in the file
     while ((line = br.readLine()) != null)
@@ -250,38 +328,15 @@ public class CSVParser {
       // update row number
       row++;
     }
-    // trim number of rows, close and return the table
+    // trim number of rows
     table.removeRows(row, table.rows() - row);
+    // try to convert table columns to numeric values
+    for (int i = 0; i < table.columns(); i++)
+      if (table.isColumnConvertible(i, DataType.NUMERIC))
+        table.convertColumn(i, DataType.NUMERIC);
+    // close and return the table
     br.close();
     return table;
-  }
-
-  public int parseNumberOfRows() throws IOException {
-    // initialize buffered reader
-    BufferedReader br = new BufferedReader(new FileReader(this.file));
-    // skip lines before counting
-    for (int i = 0; i < linesToSkip; i++)
-      br.readLine();
-    // count lines in the buffer
-    int rowCounter = 0;
-    while (br.readLine() != null)
-      rowCounter++;
-    br.close();
-    // don't consider first row if row header parsing is enabled
-    if (parseRowHeaders) rowCounter--;
-    // return counted rows
-    return rowCounter;
-  }
-
-  public int parseNumberOfColumns() throws IOException {
-    // initialize buffered reader
-    BufferedReader br = new BufferedReader(new FileReader(this.file));
-    // skip lines before counting
-    for (int i = 0; i < linesToSkip; i++)
-      br.readLine();
-    // parse first line in the buffer and return number of tokens
-    String[] tokens = parseLine(br.readLine(), false);
-    return tokens.length;
   }
 
   /**
@@ -327,7 +382,6 @@ public class CSVParser {
     {
       // define current character for convenience
       c = nextLine.charAt(i);
-
       if (c == escape)
       {
         if (isNextCharacterEscapable(nextLine, inQuotes || inField, i))
@@ -335,7 +389,7 @@ public class CSVParser {
           sb.append(nextLine.charAt(i + 1));
           i++;
         }
-      } else if (c == quotechar)
+      } else if (c == quote)
       {
         if (isNextCharacterEscapedQuote(nextLine, inQuotes || inField, i))
         {
@@ -414,24 +468,28 @@ public class CSVParser {
    * @param i current index in line
    * @return true if the following character is a quote
    */
-  private boolean isNextCharacterEscapedQuote(String nextLine, boolean inQuotes, int i) {
+  private boolean isNextCharacterEscapedQuote(
+          String nextLine, boolean inQuotes, int i) {
     return inQuotes // we are in quotes, therefore there can be escaped quotes in here.
             && nextLine.length() > (i + 1) // there is indeed another character to check.
-            && nextLine.charAt(i + 1) == quotechar;
+            && nextLine.charAt(i + 1) == quote;
   }
 
   /**
-   * precondition: the current character is an escape
+   * Checks if next character is escapable, such as a quote or and another
+   * escape character. As a precondition for this function to be called,
+   * the current character must be an escape.
    *
-   * @param nextLine the current line
-   * @param inQuotes true if the current context is quoted
-   * @param i current index in line
-   * @return true if the following character is a quote
+   * @param nextLine the current line.
+   * @param inQuotes true if the current context is quoted.
+   * @param i current index in line.
+   * @return true if the following character is a quote or an escape char.
    */
-  protected boolean isNextCharacterEscapable(String nextLine, boolean inQuotes, int i) {
-    return inQuotes // we are in quotes, therefore there can be escaped quotes in here.
-            && nextLine.length() > (i + 1) // there is indeed another character to check.
-            && (nextLine.charAt(i + 1) == quotechar || nextLine.charAt(i + 1) == this.escape);
+  private boolean isNextCharacterEscapable(
+          String nextLine, boolean inQuotes, int i) {
+    return inQuotes && nextLine.length() > (i + 1)
+            && (nextLine.charAt(i + 1) == this.quote
+            || nextLine.charAt(i + 1) == this.escape);
   }
 
   /**
@@ -440,18 +498,10 @@ public class CSVParser {
    * @param sb A sequence of characters to examine
    * @return true if every character in the sequence is whitespace
    */
-  protected boolean isAllWhiteSpace(CharSequence sb) {
-    boolean result = true;
+  private boolean isAllWhiteSpace(CharSequence sb) {
     for (int i = 0; i < sb.length(); i++)
-    {
-      char c = sb.charAt(i);
-
-      if (!Character.isWhitespace(c))
-      {
-        return false;
-      }
-    }
-    return result;
+      if (!Character.isWhitespace(sb.charAt(i))) return false;
+    return true;
   }
 
   /**
@@ -463,6 +513,21 @@ public class CSVParser {
    */
   private boolean isSameCharacter(char c1, char c2) {
     return c1 != NULL_CHARACTER && c1 == c2;
+  }
+
+  /**
+   * Checks if separator, quote and escape characters are unique.
+   *
+   * @param separator separator character.
+   * @param quote quote character.
+   * @param escape escape character.
+   * @return true if them are unique, else false.
+   */
+  private boolean areCharsUnique(char separator,
+          char quote, char escape) {
+    return isSameCharacter(separator, quote)
+            || isSameCharacter(separator, escape)
+            || isSameCharacter(quote, escape);
   }
 
 }

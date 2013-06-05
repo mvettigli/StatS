@@ -230,6 +230,45 @@ public class Table {
   }
 
   /**
+   * Checks if a column is convertible to new data type. New data type must
+   * differs from current one. The check is made is such a way to preserve
+   * data integrity: if even an element is not convertible the function will
+   * return false.
+   *
+   * @param col index of the column.
+   * @param type new data type for conversion.
+   * @return true if columns is convertible without data loss, else false.
+   * @throws ArrayIndexOutOfBoundsException if column index is not valid.
+   */
+  public boolean isColumnConvertible(int col, DataType type) {
+    // check if col index is valid
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    // check if new type is different from old one
+    if (type == getColumnType(col)) return false;
+    switch (type)
+    {
+      case NUMERIC:
+        try
+        {
+          for (int i = 0; i < table_rows; i++)
+            if (!columns.get(col).get(i).isEmpty())
+              Double.parseDouble(columns.get(col).get(i).toString());
+        } catch (NumberFormatException e)
+        {
+          return false;
+        }
+        break;
+      case CHARACTER:
+        break;
+      case UNDEFINED:
+      default:
+        return false;
+    }
+    return true;
+  }
+
+  /**
    * Inserts a new column of at the beginning of the {@code Table} object.
    * The type of the column is {@code DataType.CHARACTER} by default.
    *
@@ -597,6 +636,41 @@ public class Table {
               "row=" + row + " is not a valid row index in " + table_name);
     // set content of the cell to new value
     return columns.get(col).set(row, data);
+  }
+
+  /**
+   * Converts the column pointed by index as new data type. In order to
+   * conversion to take place, new data type must differ from current one.
+   * The data conversion will be forced because: if no parsing can take place,
+   * a null value will substitute column element.
+   *
+   * @param col the index of the column to be converted.
+   * @param type new data type of the column.
+   * @return true if successful, else false.
+   * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
+   */
+  public boolean convertColumn(int col, DataType type) {
+    // check if col index is valid
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    if (type == getColumnType(col)) return false;
+    Array array = new Array(columns.get(col).name());
+    switch (type)
+    {
+      case NUMERIC:
+        for (int i = 0; i < table_rows; i++)
+          array.add(new Numeric(columns.get(col).get(i).toString()));
+        break;
+      case CHARACTER:
+        for (int i = 0; i < table_rows; i++)
+          array.add(new Character(columns.get(col).get(i).toString()));
+        break;
+      case UNDEFINED:
+      default:
+        return false;
+    }
+    columns.set(col, array);
+    return true;
   }
 
   /**

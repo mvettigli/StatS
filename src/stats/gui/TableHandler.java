@@ -289,14 +289,13 @@ public class TableHandler extends javax.swing.JPanel {
     toolBar.add(jSeparator1);
 
     splitMain.setBorder(null);
-    splitMain.setDividerLocation(100);
+    splitMain.setDividerLocation(150);
     splitMain.setDividerSize(2);
 
     scrollPane.setBorder(null);
     splitMain.setRightComponent(scrollPane);
 
     splitLateral.setBorder(null);
-    splitLateral.setDividerLocation(100);
     splitLateral.setDividerSize(2);
     splitLateral.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     splitLateral.setResizeWeight(0.5);
@@ -319,14 +318,14 @@ public class TableHandler extends javax.swing.JPanel {
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-      .addComponent(splitMain)
+      .addComponent(splitMain, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(splitMain, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE))
+        .addComponent(splitMain, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
@@ -778,7 +777,7 @@ public class TableHandler extends javax.swing.JPanel {
       }
     };
     // set row table properties for autoresizing and selection model
-    row_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    row_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
     row_table.setSelectionModel(row_selectionModel);
     // set the default renderer for visual appereance
     row_table.setDefaultRenderer(Object.class, new TableCellRenderer() {
@@ -862,7 +861,7 @@ public class TableHandler extends javax.swing.JPanel {
     main_table = new JTable(new MainTableModel(table, isEditable));
     // set main table properties for autoresizing 
     // and row-column selection model
-    main_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    main_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
     main_table.setColumnSelectionAllowed(true);
     main_table.setSelectionModel(row_selectionModel);
     main_table.getColumnModel().setSelectionModel(col_selectionModel);
