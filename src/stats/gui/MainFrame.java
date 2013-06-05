@@ -4,10 +4,15 @@
  */
 package stats.gui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
-import javax.swing.JList;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import stats.utils.FileUtils;
 import stats.core.Table;
+import stats.utils.CSVParser;
 
 /**
  *
@@ -20,9 +25,9 @@ public class MainFrame extends javax.swing.JFrame {
    */
   public MainFrame() {
     initComponents();
-    
+
     frames = new ArrayList<>();
-    
+
     setIconImage(new ImageIcon(getClass().getResource(
             "/stats/gui/images/main.png")).getImage());
   }
@@ -43,7 +48,9 @@ public class MainFrame extends javax.swing.JFrame {
     statusBar = new javax.swing.JPanel();
     menuBar = new javax.swing.JMenuBar();
     jMenu1 = new javax.swing.JMenu();
+    menu_new = new javax.swing.JMenu();
     menu_newTable = new javax.swing.JMenuItem();
+    menu_open = new javax.swing.JMenuItem();
     jMenu2 = new javax.swing.JMenu();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -83,13 +90,27 @@ public class MainFrame extends javax.swing.JFrame {
 
     jMenu1.setText("File");
 
-    menu_newTable.setText("New table");
+    menu_new.setText("New");
+
+    menu_newTable.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stats/gui/images/table.png"))); // NOI18N
+    menu_newTable.setText("Table");
     menu_newTable.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         menu_newTableActionPerformed(evt);
       }
     });
-    jMenu1.add(menu_newTable);
+    menu_new.add(menu_newTable);
+
+    jMenu1.add(menu_new);
+
+    menu_open.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stats/gui/images/folder_table.png"))); // NOI18N
+    menu_open.setText("Open...");
+    menu_open.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menu_openActionPerformed(evt);
+      }
+    });
+    jMenu1.add(menu_open);
 
     menuBar.add(jMenu1);
 
@@ -126,8 +147,64 @@ public class MainFrame extends javax.swing.JFrame {
     TabFrame tabframe = new TabFrame(tablehandler, new ImageIcon(
             getClass().getResource("/stats/gui/images/table.png")));
     frames.add(tabframe);
-    tabbedPane.addTab(table.name(), tabframe.getIcon(), tabframe.getPanel());    
+    tabbedPane.addTab(table.name(), tabframe.getIcon(), tabframe.getPanel());
   }//GEN-LAST:event_menu_newTableActionPerformed
+
+  private void menu_openActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_openActionPerformed
+
+    // TODO: customize accessory object to get separator and quote chars
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    fileChooser.addChoosableFileFilter(new FileFilter() {
+      /**
+       * Defines which file extension is valid.
+       * Up to v1.0, only CSV and TXT files are allowed.
+       */
+      @Override
+      public boolean accept(File file) {
+        // this statement allow navigating directories
+        if (file.isDirectory()) return true;
+        // get the extension of the file
+        String extension = FileUtils.getExtension(file);
+        // check if the extension is CSV or TXT
+        if (extension != null)
+        {
+          if (extension.equals(FileUtils.CSV)
+                  || extension.equals(FileUtils.TXT))
+            return true;
+          else return false;
+        }
+        return false;
+      }
+
+      /**
+       * Returns the filter description used in the dialog.
+       */
+      @Override
+      public String getDescription() {
+        return "Comma separated value files (.csv, .txt)";
+      }
+    });
+    fileChooser.showOpenDialog(this);
+    // create a CSV parser and set its parameters
+    File selectedFile = fileChooser.getSelectedFile();
+    CSVParser parser = new CSVParser();
+    parser.setFile(selectedFile);
+    try
+    {
+      // parse the file and get the resulting table
+      Table table = parser.parseFile();
+      table.setName(FileUtils.getFileName(selectedFile));
+      // create new TabFrame
+      TableHandler tablehandler = new TableHandler(table, true);
+      TabFrame tabframe = new TabFrame(tablehandler, new ImageIcon(
+              getClass().getResource("/stats/gui/images/table.png")));
+      frames.add(tabframe);
+      tabbedPane.addTab(table.name(), tabframe.getIcon(), tabframe.getPanel());
+    } catch (IOException e)
+    {
+    }
+  }//GEN-LAST:event_menu_openActionPerformed
 
   /**
    * @param args the command line arguments
@@ -175,7 +252,9 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JMenu jMenu2;
   private javax.swing.JPanel lateralPane;
   private javax.swing.JMenuBar menuBar;
+  private javax.swing.JMenu menu_new;
   private javax.swing.JMenuItem menu_newTable;
+  private javax.swing.JMenuItem menu_open;
   private javax.swing.JSplitPane splitPane;
   private javax.swing.JPanel statusBar;
   private javax.swing.JTabbedPane tabbedPane;
