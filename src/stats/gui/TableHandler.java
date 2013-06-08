@@ -24,69 +24,76 @@ import stats.gui.dialogs.*;
 public class TableHandler extends javax.swing.JPanel {
 
   /**
-   * Table object holding data.
+   * Foreground color of table headers.
    */
-  private stats.core.Table table;
-
-  /**
-   * Read-only status of the TableHandler object.
-   */
-  private boolean isEditable;
-
-  /**
-   * The JTable object showing data contained in table object.
-   */
-  private javax.swing.JTable main_table;
-
-  /**
-   * The JTable object showing row numbers.
-   */
-  private javax.swing.JTable row_table;
-
-  /**
-   * Row selection status.
-   */
-  private ListSelectionModel row_selectionModel;
-
-  /**
-   * Column selection status.
-   */
-  private ListSelectionModel col_selectionModel;
+  private final static Color FORECOLOR_CELL =
+          new Color(0, 0, 0);
 
   /**
    * Foreground color of table headers.
    */
-  private static Color header_forecolor = new Color(0, 0, 0);
-
-  /**
-   * Background color of unselected row and column headers.
-   */
-  private static Color header_unselected_color = new Color(230, 230, 230);
-
-  /**
-   * Background color of selected row and column headers.
-   */
-  private static Color header_selected_color = new Color(200, 200, 200);
-
-  /**
-   * Foreground color of table headers.
-   */
-  private static Color cell_forecolor = new Color(0, 0, 0);
+  private final static Color FORECOLOR_HEADER =
+          new Color(0, 0, 0);
 
   /**
    * Background color of selected cells.
    */
-  private static Color cell_selected_color = new Color(0, 191, 255);
+  private final static Color BACKCOLOR_SELECTED_CELL =
+          new Color(0, 191, 255);
 
   /**
    * Background color of unselected cells.
    */
-  private static Color cell_unselected_color = new Color(255, 255, 255);
+  private final static Color BACKCOLOR_UNSELECTED_CELL =
+          new Color(255, 255, 255);
 
   /**
    * Background color of shaded cells.
    */
-  private static Color cell_shaded_color = new Color(191, 239, 255);
+  private final static Color BACKCOLOR_SHADED_CELL =
+          new Color(191, 239, 255);
+
+  /**
+   * Background color of selected row and column headers.
+   */
+  private final static Color BACKCOLOR_SELECTED_HEADER =
+          new Color(200, 200, 200);
+
+  /**
+   * Background color of unselected row and column headers.
+   */
+  private final static Color BACKCOLOR_UNSELECTED_HEADER =
+          new Color(230, 230, 230);
+
+  /**
+   * Table object holding data.
+   */
+  private Table table;
+
+  /**
+   * Read-only status of the TableHandler object.
+   */
+  private boolean editable;
+
+  /**
+   * The JTable object showing data contained in table object.
+   */
+  private JTable mainTable;
+
+  /**
+   * The JTable object showing row numbers.
+   */
+  private JTable rowTable;
+
+  /**
+   * Row selection status.
+   */
+  private ListSelectionModel rowSelectionModel;
+
+  /**
+   * Column selection status.
+   */
+  private ListSelectionModel colSelectionModel;
 
   /**
    * Storage variable for width of lateral pane.
@@ -105,15 +112,17 @@ public class TableHandler extends javax.swing.JPanel {
    * underling table and editable status.
    *
    * @param table the underlying {@link Table} storing data.
-   * @param isEditable true if editing is allowed, else false.
+   * @param editable true if editing is allowed, else false.
    */
-  public TableHandler(Table table, boolean isEditable) {
+  public TableHandler(Table table, boolean editable) {
     // initialize form components
     initComponents();
-    // initialize table object and read-only status
+
+    /* initialize table object and read-only status */
     this.table = table;
-    this.isEditable = isEditable;
-    // initialize all components
+    this.editable = editable;
+
+    /* initialize all components */
     initSelectionModels();
     initRowTable();
     initMainTable();
@@ -128,7 +137,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @return the row selection model.
    */
   public ListSelectionModel getRowSelectionModel() {
-    return row_selectionModel;
+    return rowSelectionModel;
   }
 
   /**
@@ -137,7 +146,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @return the column selection model.
    */
   public ListSelectionModel getColSelectionModel() {
-    return col_selectionModel;
+    return colSelectionModel;
   }
 
   /**
@@ -149,7 +158,7 @@ public class TableHandler extends javax.swing.JPanel {
     // store all indexes of selected columns in a list
     ArrayList<Integer> list = new ArrayList<>();
     for (int i = 0; i < table.columns(); i++)
-      if (col_selectionModel.isSelectedIndex(i)) list.add(i);
+      if (colSelectionModel.isSelectedIndex(i)) list.add(i);
     // convert a list of Integer to an int array
     int[] result = new int[list.size()];
     for (int i = 0; i < list.size(); i++)
@@ -166,7 +175,7 @@ public class TableHandler extends javax.swing.JPanel {
     // store all indexes of selected columns in a list
     ArrayList<Integer> list = new ArrayList<>();
     for (int i = 0; i < table.rows(); i++)
-      if (row_selectionModel.isSelectedIndex(i)) list.add(i);
+      if (rowSelectionModel.isSelectedIndex(i)) list.add(i);
     // convert a list of Integer to an int array
     int[] result = new int[list.size()];
     for (int i = 0; i < list.size(); i++)
@@ -239,10 +248,20 @@ public class TableHandler extends javax.swing.JPanel {
 
     col_character.setSelected(true);
     col_character.setText("Character");
+    col_character.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        col_characterActionPerformed(evt);
+      }
+    });
     col_type.add(col_character);
 
     col_numeric.setSelected(true);
     col_numeric.setText("Numeric");
+    col_numeric.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        col_numericActionPerformed(evt);
+      }
+    });
     col_type.add(col_numeric);
 
     cols_PopUp.add(col_type);
@@ -293,6 +312,7 @@ public class TableHandler extends javax.swing.JPanel {
     splitMain.setDividerSize(2);
 
     scrollPane.setBorder(null);
+    scrollPane.setDoubleBuffered(true);
     splitMain.setRightComponent(scrollPane);
 
     splitLateral.setBorder(null);
@@ -385,12 +405,12 @@ public class TableHandler extends javax.swing.JPanel {
       if (selected_cols.length != 1) columnName = rootName + (i + 1);
       // change column name in the table and update TableColumnModel
       table.setColumnName(selected_cols[i], columnName);
-      TableColumn column = main_table.getColumnModel()
+      TableColumn column = mainTable.getColumnModel()
               .getColumn(selected_cols[i]);
       column.setHeaderValue(columnName);
     }
     // update main table and column list
-    main_table.getTableHeader().updateUI();
+    mainTable.getTableHeader().updateUI();
     listColumns.updateUI();
   }//GEN-LAST:event_col_renameActionPerformed
 
@@ -419,7 +439,7 @@ public class TableHandler extends javax.swing.JPanel {
     // show the dialog and exit if operation is aborted
     if (!dialog.showDialog()) return;
     // define variable for convenience
-    TableColumnModel model = main_table.getColumnModel();
+    TableColumnModel model = mainTable.getColumnModel();
     String rootName = dialog.getColumnName();
     int number = dialog.getColumnNumber();
     DataType type = dialog.getColumnType();
@@ -454,7 +474,7 @@ public class TableHandler extends javax.swing.JPanel {
     }
     // based on insertion position modify the selection  
     int[] newSelection = new int[1];
-    col_selectionModel.clearSelection();
+    colSelectionModel.clearSelection();
     switch (dialog.getColumnPosition())
     {
       case DialogInsertCols.POSITION_BEGIN:
@@ -501,7 +521,7 @@ public class TableHandler extends javax.swing.JPanel {
         model.moveColumn(model.getColumnCount() - 1, index + j);
       }
       // select newly created columns
-      col_selectionModel.addSelectionInterval(
+      colSelectionModel.addSelectionInterval(
               selected_cols[i],
               selected_cols[i] + number - 1);
       // update next selected index to shift the selection
@@ -537,7 +557,7 @@ public class TableHandler extends javax.swing.JPanel {
       return;
     }
     // parse the selected indexes for column removal
-    TableColumnModel model = main_table.getColumnModel();
+    TableColumnModel model = mainTable.getColumnModel();
     for (int i = selected_cols.length - 1; i >= 0; i--)
     {
       // remove selected column
@@ -550,7 +570,7 @@ public class TableHandler extends javax.swing.JPanel {
         model.getColumn(j).setModelIndex(currIndex - 1);
       }
       // remove selection and actual column from table
-      col_selectionModel.removeIndexInterval(index, index);
+      colSelectionModel.removeIndexInterval(index, index);
       table.removeColumn(index);
     }
     // update column list
@@ -599,7 +619,7 @@ public class TableHandler extends javax.swing.JPanel {
       default:
     }
     // clear row selection and insert new rows
-    row_selectionModel.clearSelection();
+    rowSelectionModel.clearSelection();
     for (int i = 0; i < selected_rows.length; i++)
     {
       // insert rows in the Table object
@@ -607,7 +627,7 @@ public class TableHandler extends javax.swing.JPanel {
         table.insertRows(selected_rows[i], number);
       else table.addRows(number);
       // select newly created rows
-      row_selectionModel.addSelectionInterval(
+      rowSelectionModel.addSelectionInterval(
               selected_rows[i],
               selected_rows[i] + number - 1);
       // update next selected index to shift the selection
@@ -615,8 +635,8 @@ public class TableHandler extends javax.swing.JPanel {
         selected_rows[i + 1] += number * (i + 1);
     }
     // repaint components
-    row_table.updateUI();
-    main_table.updateUI();
+    rowTable.updateUI();
+    mainTable.updateUI();
   }//GEN-LAST:event_row_insertActionPerformed
 
   /**
@@ -652,9 +672,9 @@ public class TableHandler extends javax.swing.JPanel {
         selected_rows[i + 1] -= i + 1;
     }
     // clear row selection and repaint components
-    row_selectionModel.clearSelection();
-    row_table.updateUI();
-    main_table.updateUI();
+    rowSelectionModel.clearSelection();
+    rowTable.updateUI();
+    mainTable.updateUI();
   }//GEN-LAST:event_row_deleteActionPerformed
 
   /**
@@ -675,6 +695,66 @@ public class TableHandler extends javax.swing.JPanel {
       // restore the width of the lateral panel
     } else splitMain.setDividerLocation(lateralPaneWidth);
   }//GEN-LAST:event_buttonSidePaneActionPerformed
+
+  private void col_characterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_characterActionPerformed
+    // check if character menu item is already toggled
+    if (!col_character.isSelected()) return;
+    // check if column selection is empty
+    int[] selectedCols = getSelectedColumns();
+    if (selectedCols.length == 0) throw new IllegalArgumentException(
+              "Empty column selection.");
+    // check for data integrity
+    boolean areColumnContertible = true;
+    for (int i = 0; i < selectedCols.length; i++)
+      if (table.getColumnType(selectedCols[i]) != DataType.CHARACTER)
+        areColumnContertible &= table.isColumnConvertible(
+                selectedCols[i], DataType.CHARACTER);
+    // show confirmation message if data loss will occur
+    if (!areColumnContertible)
+    {
+      int answer = JOptionPane.showConfirmDialog(this, "Data loss will occur "
+              + "upon convertion. \nDo you want to force convertion, ",
+              "Data integrity", JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE);
+      if (answer == JOptionPane.NO_OPTION) return;
+    }
+    // convert all selected columns to character type
+    for (int i = 0; i < selectedCols.length; i++)
+      table.convertColumn(selectedCols[i], DataType.CHARACTER);
+    // update column list and scroll pane
+    listColumns.updateUI();
+    scrollPane.updateUI();
+  }//GEN-LAST:event_col_characterActionPerformed
+
+  private void col_numericActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_numericActionPerformed
+    // check if numeric menu item is already toggled
+    if (!col_numeric.isSelected()) return;
+    // check if column selection is empty
+    int[] selectedCols = getSelectedColumns();
+    if (selectedCols.length == 0) throw new IllegalArgumentException(
+              "Empty column selection.");
+    // check for data integrity
+    boolean areColumnContertible = true;
+    for (int i = 0; i < selectedCols.length; i++)
+      if (table.getColumnType(selectedCols[i]) != DataType.NUMERIC)
+        areColumnContertible &= table.isColumnConvertible(
+                selectedCols[i], DataType.NUMERIC);
+    // show confirmation message if data loss will occur
+    if (!areColumnContertible)
+    {
+      int answer = JOptionPane.showConfirmDialog(this, "Data loss will occur "
+              + "upon convertion. \nDo you want to force convertion?",
+              "Data integrity", JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE);
+      if (answer == JOptionPane.NO_OPTION) return;
+    }
+    // convert all selected columns to numeric type
+    for (int i = 0; i < selectedCols.length; i++)
+      table.convertColumn(selectedCols[i], DataType.NUMERIC);
+    // update column list and scroll pane
+    listColumns.updateUI();
+    scrollPane.updateUI();
+  }//GEN-LAST:event_col_numericActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton buttonSidePane;
@@ -709,28 +789,28 @@ public class TableHandler extends javax.swing.JPanel {
    */
   private void initSelectionModels() {
     // initialize row and column selection models
-    row_selectionModel = new DefaultListSelectionModel();
-    col_selectionModel = new DefaultListSelectionModel();
+    rowSelectionModel = new DefaultListSelectionModel();
+    colSelectionModel = new DefaultListSelectionModel();
     // refresh row and main table upon selection
-    row_selectionModel.addListSelectionListener(
+    rowSelectionModel.addListSelectionListener(
             new ListSelectionListener() {
       /**
        * Refreshes main table upon row selection.
        */
       @Override
       public void valueChanged(ListSelectionEvent e) {
-        main_table.repaint();
+        mainTable.repaint();
       }
     });
-    col_selectionModel.addListSelectionListener(
+    colSelectionModel.addListSelectionListener(
             new ListSelectionListener() {
       /**
        * Refreshes main table and header upon column selection.
        */
       @Override
       public void valueChanged(ListSelectionEvent e) {
-        main_table.getTableHeader().repaint();
-        main_table.repaint();
+        mainTable.getTableHeader().repaint();
+        mainTable.repaint();
       }
     });
   }
@@ -740,7 +820,7 @@ public class TableHandler extends javax.swing.JPanel {
    */
   private void initRowTable() {
     // initialize row table with its table model
-    row_table = new JTable(new RowTableModel(table)) {
+    rowTable = new JTable(new RowTableModel(table)) {
       /**
        * The method is overridden in order to handle multiple toggle
        * row selection.
@@ -752,35 +832,35 @@ public class TableHandler extends javax.swing.JPanel {
         // check if shift key is pressed for range selection
         if (extend)
         {
-          int lastIndex = row_selectionModel.getLeadSelectionIndex();
-          row_selectionModel.addSelectionInterval(lastIndex, rowIndex);
+          int lastIndex = rowSelectionModel.getLeadSelectionIndex();
+          rowSelectionModel.addSelectionInterval(lastIndex, rowIndex);
           return;
         }
         // check if control key is pressed for toogle selection
         if (toggle)
         {
           // select or unselect based on current selection
-          if (row_selectionModel.isSelectedIndex(rowIndex))
-            row_selectionModel.removeSelectionInterval(rowIndex, rowIndex);
-          else row_selectionModel.addSelectionInterval(rowIndex, rowIndex);
+          if (rowSelectionModel.isSelectedIndex(rowIndex))
+            rowSelectionModel.removeSelectionInterval(rowIndex, rowIndex);
+          else rowSelectionModel.addSelectionInterval(rowIndex, rowIndex);
           return;
         }
         // unselect the clicked row is alrealdy selected        
-        if (row_selectionModel.isSelectedIndex(rowIndex))
-          row_selectionModel.removeSelectionInterval(rowIndex, rowIndex);
+        if (rowSelectionModel.isSelectedIndex(rowIndex))
+          rowSelectionModel.removeSelectionInterval(rowIndex, rowIndex);
         // else reset row selection and select clicked row
         else
         {
-          row_selectionModel.clearSelection();
-          row_selectionModel.addSelectionInterval(rowIndex, rowIndex);
+          rowSelectionModel.clearSelection();
+          rowSelectionModel.addSelectionInterval(rowIndex, rowIndex);
         }
       }
     };
     // set row table properties for autoresizing and selection model
-    row_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
-    row_table.setSelectionModel(row_selectionModel);
+    rowTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    rowTable.setSelectionModel(rowSelectionModel);
     // set the default renderer for visual appereance
-    row_table.setDefaultRenderer(Object.class, new TableCellRenderer() {
+    rowTable.setDefaultRenderer(Object.class, new TableCellRenderer() {
       /**
        * When displayed, the content of the table is formatted according
        * to the selection state. The default alignment is right because the
@@ -796,41 +876,41 @@ public class TableHandler extends javax.swing.JPanel {
         cell.setText(value.toString());
         cell.setHorizontalAlignment(JLabel.RIGHT);
         // set foreground color 
-        cell.setForeground(header_forecolor);
+        cell.setForeground(FORECOLOR_HEADER);
         // set background color upon selection
-        if (isSelected) cell.setBackground(header_selected_color);
-        else cell.setBackground(header_unselected_color);
+        if (isSelected) cell.setBackground(BACKCOLOR_SELECTED_HEADER);
+        else cell.setBackground(BACKCOLOR_UNSELECTED_HEADER);
         // returns the newly created label
         return cell;
       }
     });
-    row_table.addMouseListener(new MouseListener() {
+    rowTable.addMouseListener(new MouseListener() {
       @Override
       public void mouseClicked(MouseEvent e) {
         // manage popup call
         if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1)
         {
           // get the index of clicked row
-          int rowIndex = row_table.rowAtPoint(e.getPoint());
+          int rowIndex = rowTable.rowAtPoint(e.getPoint());
           // manage click on null row
           if (rowIndex == -1) return;
           // manage popup call
           if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1)
           {
             // if clicked row is not selected set it as unique selection
-            if (!row_selectionModel.isSelectedIndex(rowIndex))
+            if (!rowSelectionModel.isSelectedIndex(rowIndex))
             {
-              row_selectionModel.clearSelection();
-              row_selectionModel.addSelectionInterval(rowIndex, rowIndex);
+              rowSelectionModel.clearSelection();
+              rowSelectionModel.addSelectionInterval(rowIndex, rowIndex);
             }
             // set menu item enable state
-            row_insert.setEnabled(isEditable);
-            row_delete.setEnabled(isEditable);
+            row_insert.setEnabled(editable);
+            row_delete.setEnabled(editable);
             row_color.setEnabled(true);
             row_marker.setEnabled(true);
             row_size.setEnabled(true);
             // show the row popup
-            rows_PopUp.show(row_table, e.getX(), e.getY());
+            rows_PopUp.show(rowTable, e.getX(), e.getY());
           }
         }
       }
@@ -858,15 +938,15 @@ public class TableHandler extends javax.swing.JPanel {
    */
   private void initMainTable() {
     // initialize main_table with its data model
-    main_table = new JTable(new MainTableModel(table, isEditable));
+    mainTable = new JTable(new MainTableModel(table, editable));
     // set main table properties for autoresizing 
     // and row-column selection model
-    main_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);    
-    main_table.setColumnSelectionAllowed(true);
-    main_table.setSelectionModel(row_selectionModel);
-    main_table.getColumnModel().setSelectionModel(col_selectionModel);
+    mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    mainTable.setColumnSelectionAllowed(true);
+    mainTable.setSelectionModel(rowSelectionModel);
+    mainTable.getColumnModel().setSelectionModel(colSelectionModel);
     // set default cell and table header renderers for visual appearance
-    main_table.setDefaultRenderer(Object.class, new TableCellRenderer() {
+    mainTable.setDefaultRenderer(Object.class, new TableCellRenderer() {
       /**
        * The content of the table is formatted according to data type and
        * selection state. The cell alignment depends on column data type,
@@ -896,17 +976,17 @@ public class TableHandler extends javax.swing.JPanel {
           cell.setText(".");
         else cell.setText(data.toString());
         // set cell foreground and background based on current selection
-        cell.setForeground(cell_forecolor);
-        if (isSelected) cell.setBackground(cell_selected_color);
-        else if (row_selectionModel.isSelectedIndex(row)
-                || col_selectionModel.isSelectedIndex(column))
-          cell.setBackground(cell_shaded_color);
-        else cell.setBackground(cell_unselected_color);
+        cell.setForeground(FORECOLOR_CELL);
+        if (isSelected) cell.setBackground(BACKCOLOR_SELECTED_CELL);
+        else if (rowSelectionModel.isSelectedIndex(row)
+                || colSelectionModel.isSelectedIndex(column))
+          cell.setBackground(BACKCOLOR_SHADED_CELL);
+        else cell.setBackground(BACKCOLOR_UNSELECTED_CELL);
         // return the newly created label
         return cell;
       }
     });
-    main_table.getTableHeader().setDefaultRenderer(new TableCellRenderer() {
+    mainTable.getTableHeader().setDefaultRenderer(new TableCellRenderer() {
       /**
        * The content of the table header is rendered based on type and
        * selection. The default alignment for table header is centered.
@@ -923,18 +1003,18 @@ public class TableHandler extends javax.swing.JPanel {
         header.setBorder(new MetalBorders.TableHeaderBorder());
         header.setPreferredSize(new Dimension(50, 30));
         // set foreground and background color based on column selection
-        header.setForeground(header_forecolor);
+        header.setForeground(FORECOLOR_HEADER);
         /* because the method returns always false, the column selection 
          * must be checked through column selection model. */
-        isSelected = col_selectionModel.isSelectedIndex(column);
-        if (isSelected) header.setBackground(header_selected_color);
-        else header.setBackground(header_unselected_color);
+        isSelected = colSelectionModel.isSelectedIndex(column);
+        if (isSelected) header.setBackground(BACKCOLOR_SELECTED_HEADER);
+        else header.setBackground(BACKCOLOR_UNSELECTED_HEADER);
         // return the newly created label
         return header;
       }
     });
     // set table header behaviour on mouse input
-    main_table.getTableHeader().addMouseListener(new MouseListener() {
+    mainTable.getTableHeader().addMouseListener(new MouseListener() {
       /**
        * Handles column selection, column addition to the end of the table and
        * pop-up menu. If user clicks on the table header but not pointing a
@@ -946,12 +1026,12 @@ public class TableHandler extends javax.swing.JPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         // get index of clicked column
-        int colIndex = main_table.getTableHeader().columnAtPoint(e.getPoint());
+        int colIndex = mainTable.getTableHeader().columnAtPoint(e.getPoint());
         // manage click on null column
         if (colIndex == -1)
         {
           // on double left-click inset a column at the end of the table
-          if (isEditable && e.getButton() == MouseEvent.BUTTON1
+          if (editable && e.getButton() == MouseEvent.BUTTON1
                   && e.getClickCount() == 2)
           {
             // get number of columns to be inserted
@@ -983,7 +1063,7 @@ public class TableHandler extends javax.swing.JPanel {
               TableColumn tableColumn = new TableColumn();
               tableColumn.setModelIndex(index);
               tableColumn.setHeaderValue(table.getColumnName(index));
-              main_table.addColumn(tableColumn);
+              mainTable.addColumn(tableColumn);
             }
             // update column list
             listColumns.updateUI();
@@ -997,8 +1077,8 @@ public class TableHandler extends javax.swing.JPanel {
           // check if shift button is pressed to select a range
           if (e.getModifiersEx() == MouseEvent.SHIFT_DOWN_MASK)
           {
-            int lastIndex = col_selectionModel.getLeadSelectionIndex();
-            col_selectionModel.addSelectionInterval(lastIndex, colIndex);
+            int lastIndex = colSelectionModel.getLeadSelectionIndex();
+            colSelectionModel.addSelectionInterval(lastIndex, colIndex);
             return;
 
           }
@@ -1006,36 +1086,36 @@ public class TableHandler extends javax.swing.JPanel {
           if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK)
           {
             // select or unselect based on current selection
-            if (col_selectionModel.isSelectedIndex(colIndex))
-              col_selectionModel.removeSelectionInterval(colIndex, colIndex);
-            else col_selectionModel.addSelectionInterval(colIndex, colIndex);
+            if (colSelectionModel.isSelectedIndex(colIndex))
+              colSelectionModel.removeSelectionInterval(colIndex, colIndex);
+            else colSelectionModel.addSelectionInterval(colIndex, colIndex);
             return;
           }
           // unselect the clicked column is alrealdy selected
-          if (col_selectionModel.isSelectedIndex(colIndex))
-            col_selectionModel.removeSelectionInterval(colIndex, colIndex);
+          if (colSelectionModel.isSelectedIndex(colIndex))
+            colSelectionModel.removeSelectionInterval(colIndex, colIndex);
           // else reset column selection and select clicked column
           else
           {
-            col_selectionModel.clearSelection();
-            col_selectionModel.addSelectionInterval(colIndex, colIndex);
+            colSelectionModel.clearSelection();
+            colSelectionModel.addSelectionInterval(colIndex, colIndex);
           }
         }
         // manage popup call
         if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1)
         {
           // if clicked column is not selected set it as unique selection
-          if (!col_selectionModel.isSelectedIndex(colIndex))
+          if (!colSelectionModel.isSelectedIndex(colIndex))
           {
-            col_selectionModel.clearSelection();
-            col_selectionModel.addSelectionInterval(colIndex, colIndex);
+            colSelectionModel.clearSelection();
+            colSelectionModel.addSelectionInterval(colIndex, colIndex);
           }
           // set menu item enable state
-          col_character.setEnabled(isEditable);
-          col_numeric.setEnabled(isEditable);
-          col_rename.setEnabled(isEditable);
-          col_insert.setEnabled(isEditable);
-          col_delete.setEnabled(isEditable);
+          col_character.setEnabled(editable);
+          col_numeric.setEnabled(editable);
+          col_rename.setEnabled(editable);
+          col_insert.setEnabled(editable);
+          col_delete.setEnabled(editable);
           // set column type menu on current selection
           int[] selected_cols = getSelectedColumns();
           if (selected_cols.length == 1)
@@ -1052,7 +1132,7 @@ public class TableHandler extends javax.swing.JPanel {
             col_numeric.setSelected(false);
           }
           // show the column popup
-          cols_PopUp.show(main_table.getTableHeader(), e.getX(), e.getY());
+          cols_PopUp.show(mainTable.getTableHeader(), e.getX(), e.getY());
         }
 
       }
@@ -1098,13 +1178,13 @@ public class TableHandler extends javax.swing.JPanel {
        */
       @Override
       public Dimension getPreferredSize() {
-        return row_table.getPreferredSize();
+        return rowTable.getPreferredSize();
       }
     };
-    row_view.setView(row_table);
+    row_view.setView(rowTable);
     // set scrollpane components
     scrollPane.setRowHeaderView(row_view);
-    scrollPane.setViewportView(main_table);
+    scrollPane.setViewportView(mainTable);
     // set the row header behaviour upon mouse input
     scrollPane.getRowHeader().addMouseListener(new MouseListener() {
       /**
@@ -1115,7 +1195,7 @@ public class TableHandler extends javax.swing.JPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         // manage row addition at the end of the table
-        if (isEditable && e.getButton() == MouseEvent.BUTTON1
+        if (editable && e.getButton() == MouseEvent.BUTTON1
                 && e.getClickCount() == 2)
         {
           // get number of rows to be inserted
@@ -1142,8 +1222,8 @@ public class TableHandler extends javax.swing.JPanel {
           table.addRows(rowNumber);
           // update row and main table models
           int lastRow = table.rows() - rowNumber;
-          RowTableModel row_model = (RowTableModel) row_table.getModel();
-          MainTableModel main_model = (MainTableModel) main_table.getModel();
+          RowTableModel row_model = (RowTableModel) rowTable.getModel();
+          MainTableModel main_model = (MainTableModel) mainTable.getModel();
           row_model.fireTableRowsInserted(lastRow, table.rows() - 1);
           main_model.fireTableRowsInserted(lastRow, table.rows() - 1);
         }
@@ -1194,7 +1274,7 @@ public class TableHandler extends javax.swing.JPanel {
     // initialize lateral pane width
     lateralPaneWidth = 100;
     // set model and selection model of columns list
-    listColumns.setSelectionModel(col_selectionModel);
+    listColumns.setSelectionModel(colSelectionModel);
     listColumns.setModel(new ListModel() {
       /**
        * Returns the number of columns in the Table object.
@@ -1228,7 +1308,7 @@ public class TableHandler extends javax.swing.JPanel {
       public void removeListDataListener(ListDataListener l) {
       }
     });
-    listColumns.setSelectionModel(col_selectionModel);
+    listColumns.setSelectionModel(colSelectionModel);
     // initialize default cell renderer of columns list
     listColumns.setCellRenderer(new ListCellRenderer() {
       /**
@@ -1261,8 +1341,8 @@ public class TableHandler extends javax.swing.JPanel {
         element.setIconTextGap(7);
         element.setIcon(new ImageIcon(getClass().getResource(iconURL)));
         // set background based on selection
-        element.setForeground(cell_forecolor);
-        if (isSelected) element.setBackground(cell_selected_color);
+        element.setForeground(FORECOLOR_CELL);
+        if (isSelected) element.setBackground(BACKCOLOR_SELECTED_CELL);
         else element.setBackground(list.getBackground());
         // return the newly created label
         return element;

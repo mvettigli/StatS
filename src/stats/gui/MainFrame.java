@@ -1,6 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* ----------------------------------------------------------------------------
+ * File: MainFrame.java
+ * Date: March 31th, 2013
+ * ----------------------------------------------------------------------------
  */
 package stats.gui;
 
@@ -50,6 +51,7 @@ public class MainFrame extends javax.swing.JFrame {
     jMenu1 = new javax.swing.JMenu();
     menu_new = new javax.swing.JMenu();
     menu_newTable = new javax.swing.JMenuItem();
+    menu_debug = new javax.swing.JMenuItem();
     menu_open = new javax.swing.JMenuItem();
     jMenu2 = new javax.swing.JMenu();
 
@@ -100,6 +102,14 @@ public class MainFrame extends javax.swing.JFrame {
       }
     });
     menu_new.add(menu_newTable);
+
+    menu_debug.setText("debug");
+    menu_debug.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menu_debugActionPerformed(evt);
+      }
+    });
+    menu_new.add(menu_debug);
 
     jMenu1.add(menu_new);
 
@@ -185,7 +195,7 @@ public class MainFrame extends javax.swing.JFrame {
         return "Comma separated value files (.csv, .txt)";
       }
     });
-    fileChooser.showOpenDialog(this);
+    if (fileChooser.showOpenDialog(this) == JFileChooser.CANCEL_OPTION) return;
     // create a CSV parser and set its parameters
     File selectedFile = fileChooser.getSelectedFile();
     CSVParser parser = new CSVParser();
@@ -205,6 +215,15 @@ public class MainFrame extends javax.swing.JFrame {
     {
     }
   }//GEN-LAST:event_menu_openActionPerformed
+
+  private void menu_debugActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_debugActionPerformed
+    // create new TabFrame
+
+    PlotHandler plotHandler = new PlotHandler();
+    TabFrame tabframe = new TabFrame(plotHandler, null);
+    frames.add(tabframe);
+    tabbedPane.addTab("debug", tabframe.getIcon(), tabframe.getPanel());
+  }//GEN-LAST:event_menu_debugActionPerformed
 
   /**
    * @param args the command line arguments
@@ -252,6 +271,7 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JMenu jMenu2;
   private javax.swing.JPanel lateralPane;
   private javax.swing.JMenuBar menuBar;
+  private javax.swing.JMenuItem menu_debug;
   private javax.swing.JMenu menu_new;
   private javax.swing.JMenuItem menu_newTable;
   private javax.swing.JMenuItem menu_open;

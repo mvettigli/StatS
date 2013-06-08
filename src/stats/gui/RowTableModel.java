@@ -1,6 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* ----------------------------------------------------------------------------
+ * File: RowTableModel.java
+ * Date: April 2nd, 2013
+ * ----------------------------------------------------------------------------
  */
 package stats.gui;
 
