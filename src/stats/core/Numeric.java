@@ -11,7 +11,7 @@ package stats.core;
  * subclass, the object can be set to null value.
  *
  * @author M. Vettigli
- * @version 1.0
+ * @version 2.0
  */
 public class Numeric extends Data {
 
@@ -19,7 +19,7 @@ public class Numeric extends Data {
    * The null value for {@code Numeric} class, the minimum of {@code
    * double} type.
    */
-  private static double NULL = Double.MIN_VALUE;
+  private static final double NULL = Double.MIN_VALUE;
 
   /**
    * Variable used to store the content of the {@code Numeric} object.
@@ -135,11 +135,11 @@ public class Numeric extends Data {
   /**
    * The function returns the data type of the {@code Numeric} object.
    *
-   * @return {@code DataType.NUMERIC}.
+   * @return {@code Data.NUMERIC}.
    */
   @Override
-  public DataType type() {
-    return DataType.NUMERIC;
+  public int type() {
+    return Data.NUMERIC;
   }
 
   /**

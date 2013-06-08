@@ -11,7 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import stats.core.DataType;
+import stats.core.Data;
 import stats.core.Table;
 
 /**
@@ -332,8 +332,8 @@ public class CSVParser {
     table.removeRows(row, table.rows() - row);
     // try to convert table columns to numeric values
     for (int i = 0; i < table.columns(); i++)
-      if (table.isColumnConvertible(i, DataType.NUMERIC))
-        table.convertColumn(i, DataType.NUMERIC);
+      if (table.isColumnConvertible(i, Data.NUMERIC))
+        table.convertColumn(i, Data.NUMERIC);
     // close and return the table
     br.close();
     return table;

@@ -5,36 +5,66 @@
  */
 package stats.gui.dialogs;
 
-import stats.core.DataType;
+import java.awt.Frame;
+import stats.core.Data;
 
 /**
+ * The {@code DialogInsertCols} class is a dialog for getting all the
+ * informations needed for insertion of columns in a {@code Table} object
+ * upon selection. The information are:
+ * <ul>
+ * <li>column root name,</li>
+ * <li>data type of the new columns,</li>
+ * <li>number of columns to be inserted</li>
+ * <li>position of the insertion.
+ * </ul>
+ * After initialization, call {@code showDialog()} to show the dialog and
+ * return dialog result.
  *
- * @author marco
+ * @author M. Vettigli
+ * @version 2.0
  */
 public class DialogInsertCols extends javax.swing.JDialog {
 
+  /**
+   * Define the insertion position after current selection.
+   */
   public static final int POSITION_AFTER = 1;
 
+  /**
+   * Define the insertion position before current selection.
+   */
   public static final int POSITION_BEFORE = 2;
 
+  /**
+   * Define the insertion position at the beginning of the table.
+   */
   public static final int POSITION_BEGIN = 3;
 
+  /**
+   * Define the insertion position at the end of the table.
+   */
   public static final int POSITION_END = 4;
-  
+
+  /**
+   * Stores the result of the dialog. If true, the dialog was successfully
+   * closed and insertion can take place. If false, the dialog was closed or
+   * the operation was not confirmed.
+   */
   private boolean dialog_result;
 
   /**
    * Creates new form DialogInsertCols
    */
-  public DialogInsertCols(java.awt.Frame parent, boolean modal) {
+  public DialogInsertCols(Frame parent, boolean modal) {
     super(parent, modal);
     initComponents();
     dialog_result = false;
   }
 
   /**
-   * Returns the name of the new columns to be inserted. The value is extracted
-   * from the content of text field inserted by the user.
+   * Returns the root name of the new columns to be inserted. The value is
+   * extracted from the content of text field inserted by the user.
    *
    * @return name for new columns.
    */
@@ -44,15 +74,17 @@ public class DialogInsertCols extends javax.swing.JDialog {
 
   /**
    * Returns the type of new columns to be inserted. The return type is
-   * {@link DataType} and it is related to the selection of combo-box.
+   * related to the selection of combo-box.
    *
    * @return the type of new columns.
    */
-  public DataType getColumnType() {
+  public int getColumnType() {
+    //get the label of the selected item..
     String selection = combo_type.getSelectedItem().toString();
-    if (selection == "Character") return DataType.CHARACTER;
-    else if (selection == "Numeric") return DataType.NUMERIC;
-    return DataType.UNDEFINED;
+    // and return data type based on its content 
+    if (selection.equals("Character")) return Data.CHARACTER;
+    else if (selection.equals("Numeric")) return Data.NUMERIC;
+    return Data.UNDEFINED;
   }
 
   /**
@@ -62,7 +94,15 @@ public class DialogInsertCols extends javax.swing.JDialog {
    * @return number of new columns.
    */
   public int getColumnNumber() {
-    return Integer.parseInt(spinner_number.getValue().toString());
+    int columnNumber = 0;
+    try
+    {
+      columnNumber = Integer.parseInt(spinner_number.getValue().toString());
+    } catch (NumberFormatException e)
+    {
+      return 0;
+    }
+    return columnNumber;
   }
 
   /**
@@ -84,11 +124,17 @@ public class DialogInsertCols extends javax.swing.JDialog {
     else return POSITION_END;
   }
 
+  /**
+   * The function shows the {@code DialogInsertCols} in modal state and
+   * returns true if the insertion is confirmed, else false.
+   *
+   * @return true if insertion is confirmed, else false.
+   */
   public boolean showDialog() {
     setVisible(true);
     return dialog_result;
   }
-  
+
   /**
    * This method is called from within the constructor to
    * initialize the form.
@@ -228,11 +274,23 @@ public class DialogInsertCols extends javax.swing.JDialog {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  /**
+   * Handles the click on "OK" button. The function will set the dialog result
+   * flag on true and it will dispose the dialog.
+   *
+   * @param evt the action event.
+   */
   private void button_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_okActionPerformed
     dialog_result = true;
     this.dispose();
   }//GEN-LAST:event_button_okActionPerformed
 
+  /**
+   * Handles the click on "Cancel" button. The function will set the dialog
+   * result flag on false and it will dispose the dialog.
+   *
+   * @param evt the action event.
+   */
   private void button_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_cancelActionPerformed
     dialog_result = false;
     this.dispose();
