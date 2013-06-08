@@ -19,47 +19,52 @@ import stats.core.Data;
  * <li>position of the insertion.
  * </ul>
  * After initialization, call {@code showDialog()} to show the dialog and
- * return dialog result.
+ * get dialog result.
  *
  * @author M. Vettigli
- * @version 2.0
+ * @version 1.0
  */
 public class DialogInsertCols extends javax.swing.JDialog {
 
   /**
    * Define the insertion position after current selection.
    */
-  public static final int POSITION_AFTER = 1;
+  public static final int POSITION_AFTER = 0;
 
   /**
    * Define the insertion position before current selection.
    */
-  public static final int POSITION_BEFORE = 2;
+  public static final int POSITION_BEFORE = 1;
 
   /**
    * Define the insertion position at the beginning of the table.
    */
-  public static final int POSITION_BEGIN = 3;
+  public static final int POSITION_BEGIN = 2;
 
   /**
    * Define the insertion position at the end of the table.
    */
-  public static final int POSITION_END = 4;
+  public static final int POSITION_END = 3;
 
   /**
    * Stores the result of the dialog. If true, the dialog was successfully
    * closed and insertion can take place. If false, the dialog was closed or
    * the operation was not confirmed.
    */
-  private boolean dialog_result;
+  private boolean dialogResult;
 
   /**
    * Creates new form DialogInsertCols
    */
   public DialogInsertCols(Frame parent, boolean modal) {
+
+    /* initialize form components */
     super(parent, modal);
     initComponents();
-    dialog_result = false;
+    this.getRootPane().setDefaultButton(buttonOk);
+
+    /* initialize private variable */
+    dialogResult = false;
   }
 
   /**
@@ -69,7 +74,7 @@ public class DialogInsertCols extends javax.swing.JDialog {
    * @return name for new columns.
    */
   public String getColumnName() {
-    return text_name.getText();
+    return textName.getText();
   }
 
   /**
@@ -80,7 +85,7 @@ public class DialogInsertCols extends javax.swing.JDialog {
    */
   public int getColumnType() {
     //get the label of the selected item..
-    String selection = combo_type.getSelectedItem().toString();
+    String selection = comboDataType.getSelectedItem().toString();
     // and return data type based on its content 
     if (selection.equals("Character")) return Data.CHARACTER;
     else if (selection.equals("Numeric")) return Data.NUMERIC;
@@ -97,7 +102,7 @@ public class DialogInsertCols extends javax.swing.JDialog {
     int columnNumber = 0;
     try
     {
-      columnNumber = Integer.parseInt(spinner_number.getValue().toString());
+      columnNumber = Integer.parseInt(spinnerNumber.getValue().toString());
     } catch (NumberFormatException e)
     {
       return 0;
@@ -118,21 +123,21 @@ public class DialogInsertCols extends javax.swing.JDialog {
    */
   public int getColumnPosition() {
     // check which radio button is selected and returns the proper value
-    if (radio_after.isSelected()) return POSITION_AFTER;
-    else if (radio_before.isSelected()) return POSITION_BEFORE;
-    else if (radio_begin.isSelected()) return POSITION_BEGIN;
+    if (radioAfter.isSelected()) return POSITION_AFTER;
+    else if (radioBefore.isSelected()) return POSITION_BEFORE;
+    else if (radioBegin.isSelected()) return POSITION_BEGIN;
     else return POSITION_END;
   }
 
   /**
-   * The function shows the {@code DialogInsertCols} in modal state and
+   * The function shows the {@code DialogInsertCols} object in modal state and
    * returns true if the insertion is confirmed, else false.
    *
    * @return true if insertion is confirmed, else false.
    */
   public boolean showDialog() {
     setVisible(true);
-    return dialog_result;
+    return dialogResult;
   }
 
   /**
@@ -146,60 +151,60 @@ public class DialogInsertCols extends javax.swing.JDialog {
   private void initComponents() {
 
     radio_group = new javax.swing.ButtonGroup();
-    text_name = new javax.swing.JTextField();
-    radio_before = new javax.swing.JRadioButton();
-    radio_after = new javax.swing.JRadioButton();
-    radio_begin = new javax.swing.JRadioButton();
-    radio_end = new javax.swing.JRadioButton();
-    combo_type = new javax.swing.JComboBox();
-    spinner_number = new javax.swing.JSpinner();
-    javax.swing.JLabel label_header = new javax.swing.JLabel();
-    javax.swing.JLabel label_type = new javax.swing.JLabel();
-    javax.swing.JLabel label_number = new javax.swing.JLabel();
-    javax.swing.JLabel label_position = new javax.swing.JLabel();
+    textName = new javax.swing.JTextField();
+    radioBefore = new javax.swing.JRadioButton();
+    radioAfter = new javax.swing.JRadioButton();
+    radioBegin = new javax.swing.JRadioButton();
+    radioEnd = new javax.swing.JRadioButton();
+    comboDataType = new javax.swing.JComboBox();
+    spinnerNumber = new javax.swing.JSpinner();
+    javax.swing.JLabel labelHeader = new javax.swing.JLabel();
+    javax.swing.JLabel labelDataType = new javax.swing.JLabel();
+    javax.swing.JLabel labelNumber = new javax.swing.JLabel();
+    javax.swing.JLabel labelPosition = new javax.swing.JLabel();
     separator = new javax.swing.JSeparator();
-    button_ok = new javax.swing.JButton();
-    button_cancel = new javax.swing.JButton();
+    buttonOk = new javax.swing.JButton();
+    buttonCancel = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("Insert column(s)...");
 
-    radio_group.add(radio_before);
-    radio_before.setText("before");
+    radio_group.add(radioBefore);
+    radioBefore.setText("before");
 
-    radio_group.add(radio_after);
-    radio_after.setSelected(true);
-    radio_after.setText("after");
+    radio_group.add(radioAfter);
+    radioAfter.setSelected(true);
+    radioAfter.setText("after");
 
-    radio_group.add(radio_begin);
-    radio_begin.setText("begin");
+    radio_group.add(radioBegin);
+    radioBegin.setText("begin");
 
-    radio_group.add(radio_end);
-    radio_end.setText("end");
+    radio_group.add(radioEnd);
+    radioEnd.setText("end");
 
-    combo_type.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Character", "Numeric" }));
+    comboDataType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Character", "Numeric" }));
 
-    spinner_number.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+    spinnerNumber.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
 
-    label_header.setText("Insert name of new column(s)");
+    labelHeader.setText("Insert name of new column(s)");
 
-    label_type.setText("Type :");
+    labelDataType.setText("Type :");
 
-    label_number.setText("Number :");
+    labelNumber.setText("Number :");
 
-    label_position.setText("Position :");
+    labelPosition.setText("Position :");
 
-    button_ok.setText("OK");
-    button_ok.addActionListener(new java.awt.event.ActionListener() {
+    buttonOk.setText("OK");
+    buttonOk.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        button_okActionPerformed(evt);
+        buttonOkActionPerformed(evt);
       }
     });
 
-    button_cancel.setText("Cancel");
-    button_cancel.addActionListener(new java.awt.event.ActionListener() {
+    buttonCancel.setText("Cancel");
+    buttonCancel.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        button_cancelActionPerformed(evt);
+        buttonCancelActionPerformed(evt);
       }
     });
 
@@ -212,62 +217,62 @@ public class DialogInsertCols extends javax.swing.JDialog {
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-              .addComponent(label_type)
-              .addComponent(label_position))
+              .addComponent(labelDataType)
+              .addComponent(labelPosition))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(combo_type, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(comboDataType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(label_number)
+                .addComponent(labelNumber)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spinner_number, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(spinnerNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
               .addGroup(layout.createSequentialGroup()
-                .addComponent(radio_after)
+                .addComponent(radioAfter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(radio_before)
+                .addComponent(radioBefore)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(radio_begin)
+                .addComponent(radioBegin)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(radio_end))))
-          .addComponent(text_name)
+                .addComponent(radioEnd))))
+          .addComponent(textName)
           .addGroup(layout.createSequentialGroup()
-            .addComponent(label_header)
+            .addComponent(labelHeader)
             .addGap(0, 0, Short.MAX_VALUE))
           .addComponent(separator)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addGap(0, 0, Short.MAX_VALUE)
-            .addComponent(button_ok)
+            .addComponent(buttonOk)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(button_cancel)))
+            .addComponent(buttonCancel)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
-        .addComponent(label_header)
+        .addComponent(labelHeader)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(text_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(radio_before)
-          .addComponent(radio_after)
-          .addComponent(radio_begin)
-          .addComponent(radio_end)
-          .addComponent(label_position))
+        .addComponent(textName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(combo_type, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(spinner_number, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(label_type)
-          .addComponent(label_number))
+          .addComponent(radioBefore)
+          .addComponent(radioAfter)
+          .addComponent(radioBegin)
+          .addComponent(radioEnd)
+          .addComponent(labelPosition))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(comboDataType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(spinnerNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(labelDataType)
+          .addComponent(labelNumber))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .addComponent(separator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addGap(5, 5, 5)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(button_cancel)
-          .addComponent(button_ok))
+          .addComponent(buttonCancel)
+          .addComponent(buttonOk))
         .addContainerGap())
     );
 
@@ -280,10 +285,10 @@ public class DialogInsertCols extends javax.swing.JDialog {
    *
    * @param evt the action event.
    */
-  private void button_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_okActionPerformed
-    dialog_result = true;
+  private void buttonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOkActionPerformed
+    dialogResult = true;
     this.dispose();
-  }//GEN-LAST:event_button_okActionPerformed
+  }//GEN-LAST:event_buttonOkActionPerformed
 
   /**
    * Handles the click on "Cancel" button. The function will set the dialog
@@ -291,22 +296,23 @@ public class DialogInsertCols extends javax.swing.JDialog {
    *
    * @param evt the action event.
    */
-  private void button_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_cancelActionPerformed
-    dialog_result = false;
+  private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+    dialogResult = false;
     this.dispose();
-  }//GEN-LAST:event_button_cancelActionPerformed
+  }//GEN-LAST:event_buttonCancelActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton button_cancel;
-  private javax.swing.JButton button_ok;
-  private javax.swing.JComboBox combo_type;
-  private javax.swing.JRadioButton radio_after;
-  private javax.swing.JRadioButton radio_before;
-  private javax.swing.JRadioButton radio_begin;
-  private javax.swing.JRadioButton radio_end;
+  private javax.swing.JButton buttonCancel;
+  private javax.swing.JButton buttonOk;
+  private javax.swing.JComboBox comboDataType;
+  private javax.swing.JRadioButton radioAfter;
+  private javax.swing.JRadioButton radioBefore;
+  private javax.swing.JRadioButton radioBegin;
+  private javax.swing.JRadioButton radioEnd;
   private javax.swing.ButtonGroup radio_group;
   private javax.swing.JSeparator separator;
-  private javax.swing.JSpinner spinner_number;
-  private javax.swing.JTextField text_name;
+  private javax.swing.JSpinner spinnerNumber;
+  private javax.swing.JTextField textName;
   // End of variables declaration//GEN-END:variables
+
 }

@@ -29,32 +29,32 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="label_number" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelNumber" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="spinner_number" pref="53" max="32767" attributes="0"/>
+                      <Component id="spinnerNumber" pref="51" max="32767" attributes="0"/>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                      <Component id="label_position" min="-2" max="-2" attributes="0"/>
+                      <Component id="labelPosition" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="radio_after" min="-2" max="-2" attributes="0"/>
+                      <Component id="radioAfter" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Component id="radio_before" min="-2" max="-2" attributes="0"/>
+                      <Component id="radioBefore" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Component id="radio_begin" min="-2" max="-2" attributes="0"/>
+                      <Component id="radioBegin" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                      <Component id="radio_end" min="-2" max="-2" attributes="0"/>
+                      <Component id="radioEnd" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="separator" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="button_ok" min="-2" max="-2" attributes="0"/>
+                      <Component id="buttonOk" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="button_cancel" min="-2" max="-2" attributes="0"/>
+                      <Component id="buttonCancel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -63,49 +63,35 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="label_number" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="spinner_number" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="radio_before" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="radio_after" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="radio_begin" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="radio_end" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="label_position" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="labelNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="spinnerNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="radioBefore" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="radioAfter" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="radioBegin" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="radioEnd" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="labelPosition" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="6" max="32767" attributes="0"/>
+              <Component id="separator" min="-2" pref="10" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="buttonOk" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="buttonCancel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="separator" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="button_cancel" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="button_ok" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="label_number">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Number:"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JSpinner" name="spinner_number">
+    <Component class="javax.swing.JSpinner" name="spinnerNumber">
       <Properties>
         <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
           <SpinnerModel initial="1" minimum="1" numberType="java.lang.Integer" stepSize="1" type="number"/>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="label_position">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Position :"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JRadioButton" name="radio_after">
+    <Component class="javax.swing.JRadioButton" name="radioAfter">
       <Properties>
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup"/>
@@ -114,7 +100,7 @@
         <Property name="text" type="java.lang.String" value="after"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JRadioButton" name="radio_before">
+    <Component class="javax.swing.JRadioButton" name="radioBefore">
       <Properties>
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup"/>
@@ -122,7 +108,7 @@
         <Property name="text" type="java.lang.String" value="before"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JRadioButton" name="radio_begin">
+    <Component class="javax.swing.JRadioButton" name="radioBegin">
       <Properties>
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup"/>
@@ -130,7 +116,7 @@
         <Property name="text" type="java.lang.String" value="begin"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JRadioButton" name="radio_end">
+    <Component class="javax.swing.JRadioButton" name="radioEnd">
       <Properties>
         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
           <ComponentRef name="buttonGroup"/>
@@ -138,22 +124,36 @@
         <Property name="text" type="java.lang.String" value="end"/>
       </Properties>
     </Component>
+    <Component class="javax.swing.JLabel" name="labelNumber">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Number:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelPosition">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Position :"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+    </Component>
     <Component class="javax.swing.JSeparator" name="separator">
     </Component>
-    <Component class="javax.swing.JButton" name="button_cancel">
+    <Component class="javax.swing.JButton" name="buttonCancel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cancel"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_cancelActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonCancelActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="button_ok">
+    <Component class="javax.swing.JButton" name="buttonOk">
       <Properties>
         <Property name="text" type="java.lang.String" value="OK"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="button_okActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonOkActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

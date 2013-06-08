@@ -1,51 +1,116 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* ----------------------------------------------------------------------------
+ * File: DialogInsertRows.java
+ * Date: May 26th, 2013
+ * ----------------------------------------------------------------------------
  */
 package stats.gui.dialogs;
 
-import javax.swing.SpinnerNumberModel;
+import java.awt.Frame;
 
 /**
+ * The {@code DialogInsertRows} class is a dialog for getting all the
+ * informations needed for insertion of rows in a {@code Table} object
+ * upon selection. The information are:
+ * <ul>
+ * <li>number of columns to be inserted</li>
+ * <li>position of the insertion.
+ * </ul>
+ * After initialization, call {@code showDialog()} to show the dialog and
+ * get dialog result.
  *
- * @author marco
+ * @author M. Vettigli
+ * @version 1.0
  */
 public class DialogInsertRows extends javax.swing.JDialog {
 
-  public static final int POSITION_AFTER = 1;
+  /**
+   * Define the insertion position after current selection.
+   */
+  public static final int POSITION_AFTER = 0;
 
-  public static final int POSITION_BEFORE = 2;
+  /**
+   * Define the insertion position before current selection.
+   */
+  public static final int POSITION_BEFORE = 1;
 
-  public static final int POSITION_BEGIN = 3;
+  /**
+   * Define the insertion position at the beginning of the table.
+   */
+  public static final int POSITION_BEGIN = 2;
 
-  public static final int POSITION_END = 4;
+  /**
+   * Define the insertion position at the end of the table.
+   */
+  public static final int POSITION_END = 3;
 
-  private boolean dialog_result;
+  /**
+   * Stores the result of the dialog. If true, the dialog was successfully
+   * closed and insertion can take place. If false, the dialog was closed or
+   * the operation was not confirmed.
+   */
+  private boolean dialogResult;
 
   /**
    * Creates new form DialogInsertRows
    */
-  public DialogInsertRows(java.awt.Frame parent, boolean modal) {
+  public DialogInsertRows(Frame parent, boolean modal) {
+
+    /* initialize form components */
     super(parent, modal);
     initComponents();
-    dialog_result = false;        
+    this.getRootPane().setDefaultButton(buttonOk);
+
+    /* initialize private variable */
+    dialogResult = false;
+
   }
 
+  /**
+   * Returns the number of new rows to be inserted. The value is extracted
+   * from the spinner-box of the dialog.
+   *
+   * @return number of new rows.
+   */
   public int getRowNumber() {
-    return Integer.parseInt(spinner_number.getValue().toString());
+    int number = 0;
+    try
+    {
+      number = Integer.parseInt(spinnerNumber.getValue().toString());
+    } catch (NumberFormatException e)
+    {
+      return 0;
+    }
+    return number;
   }
 
+  /**
+   * Returns the position of the new rows to be inserted. It depends on
+   * selection of radio-boxes in the dialog window by the user. The possible
+   * results are:
+   * <ul> <li>{@code POSITION_AFTER},</li>
+   * <li>{@code POSITION_BEFORE},</li>
+   * <li>{@code POSITION_BEGIN},</li>
+   * <li>{@code POSITION_END}</li></ul>
+   *
+   * @return position of the insertion.
+   */
   public int getRowPosition() {
     // check which radio button is selected and returns the proper value
-    if (radio_after.isSelected()) return POSITION_AFTER;
-    else if (radio_before.isSelected()) return POSITION_BEFORE;
-    else if (radio_begin.isSelected()) return POSITION_BEGIN;
+    if (radioAfter.isSelected()) return POSITION_AFTER;
+    else if (radioBefore.isSelected()) return POSITION_BEFORE;
+    else if (radioBegin.isSelected()) return POSITION_BEGIN;
     else return POSITION_END;
   }
 
+  /**
+   * The function shows the {@code DialogInsertRows} object in modal state and
+   * returns true if the insertion is confirmed, else false.
+   *
+   * @return true if insertion is confirmed, else false.
+   */
   public boolean showDialog() {
     setVisible(true);
-    return dialog_result;
+    return dialogResult;
   }
 
   /**
@@ -59,50 +124,50 @@ public class DialogInsertRows extends javax.swing.JDialog {
   private void initComponents() {
 
     buttonGroup = new javax.swing.ButtonGroup();
-    label_number = new javax.swing.JLabel();
-    spinner_number = new javax.swing.JSpinner();
-    javax.swing.JLabel label_position = new javax.swing.JLabel();
-    radio_after = new javax.swing.JRadioButton();
-    radio_before = new javax.swing.JRadioButton();
-    radio_begin = new javax.swing.JRadioButton();
-    radio_end = new javax.swing.JRadioButton();
+    spinnerNumber = new javax.swing.JSpinner();
+    radioAfter = new javax.swing.JRadioButton();
+    radioBefore = new javax.swing.JRadioButton();
+    radioBegin = new javax.swing.JRadioButton();
+    radioEnd = new javax.swing.JRadioButton();
+    labelNumber = new javax.swing.JLabel();
+    javax.swing.JLabel labelPosition = new javax.swing.JLabel();
     separator = new javax.swing.JSeparator();
-    button_cancel = new javax.swing.JButton();
-    button_ok = new javax.swing.JButton();
+    buttonCancel = new javax.swing.JButton();
+    buttonOk = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("Insert rows...");
 
-    label_number.setText("Number:");
+    spinnerNumber.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
 
-    spinner_number.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+    buttonGroup.add(radioAfter);
+    radioAfter.setSelected(true);
+    radioAfter.setText("after");
 
-    label_position.setText("Position :");
+    buttonGroup.add(radioBefore);
+    radioBefore.setText("before");
 
-    buttonGroup.add(radio_after);
-    radio_after.setSelected(true);
-    radio_after.setText("after");
+    buttonGroup.add(radioBegin);
+    radioBegin.setText("begin");
 
-    buttonGroup.add(radio_before);
-    radio_before.setText("before");
+    buttonGroup.add(radioEnd);
+    radioEnd.setText("end");
 
-    buttonGroup.add(radio_begin);
-    radio_begin.setText("begin");
+    labelNumber.setText("Number:");
 
-    buttonGroup.add(radio_end);
-    radio_end.setText("end");
+    labelPosition.setText("Position :");
 
-    button_cancel.setText("Cancel");
-    button_cancel.addActionListener(new java.awt.event.ActionListener() {
+    buttonCancel.setText("Cancel");
+    buttonCancel.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        button_cancelActionPerformed(evt);
+        buttonCancelActionPerformed(evt);
       }
     });
 
-    button_ok.setText("OK");
-    button_ok.addActionListener(new java.awt.event.ActionListener() {
+    buttonOk.setText("OK");
+    buttonOk.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        button_okActionPerformed(evt);
+        buttonOkActionPerformed(evt);
       }
     });
 
@@ -114,25 +179,25 @@ public class DialogInsertRows extends javax.swing.JDialog {
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(layout.createSequentialGroup()
-            .addComponent(label_number)
+            .addComponent(labelNumber)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(spinner_number, javax.swing.GroupLayout.DEFAULT_SIZE, 53, Short.MAX_VALUE)
+            .addComponent(spinnerNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
             .addGap(18, 18, 18)
-            .addComponent(label_position)
+            .addComponent(labelPosition)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(radio_after)
+            .addComponent(radioAfter)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(radio_before)
+            .addComponent(radioBefore)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(radio_begin)
+            .addComponent(radioBegin)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(radio_end))
+            .addComponent(radioEnd))
           .addComponent(separator)
           .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
             .addGap(0, 0, Short.MAX_VALUE)
-            .addComponent(button_ok)
+            .addComponent(buttonOk)
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(button_cancel)))
+            .addComponent(buttonCancel)))
         .addContainerGap())
     );
     layout.setVerticalGroup(
@@ -140,45 +205,58 @@ public class DialogInsertRows extends javax.swing.JDialog {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(label_number)
-          .addComponent(spinner_number, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(radio_before)
-          .addComponent(radio_after)
-          .addComponent(radio_begin)
-          .addComponent(radio_end)
-          .addComponent(label_position))
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+          .addComponent(labelNumber)
+          .addComponent(spinnerNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(radioBefore)
+          .addComponent(radioAfter)
+          .addComponent(radioBegin)
+          .addComponent(radioEnd)
+          .addComponent(labelPosition))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
         .addComponent(separator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addGap(5, 5, 5)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(button_cancel)
-          .addComponent(button_ok))
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addComponent(buttonOk)
+          .addComponent(buttonCancel))
+        .addContainerGap())
     );
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
-  private void button_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_cancelActionPerformed
-    dialog_result = false;
+  /**
+   * Handles the click on "OK" button. The function will set the dialog result
+   * flag on true and it will dispose the dialog.
+   *
+   * @param evt the action event.
+   */
+  private void buttonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOkActionPerformed
+    dialogResult = true;
     this.dispose();
-  }//GEN-LAST:event_button_cancelActionPerformed
+  }//GEN-LAST:event_buttonOkActionPerformed
 
-  private void button_okActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_okActionPerformed
-    dialog_result = true;
+  /**
+   * Handles the click on "Cancel" button. The function will set the dialog
+   * result flag on false and it will dispose the dialog.
+   *
+   * @param evt the action event.
+   */
+  private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+    dialogResult = false;
     this.dispose();
-  }//GEN-LAST:event_button_okActionPerformed
+  }//GEN-LAST:event_buttonCancelActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton buttonCancel;
   private javax.swing.ButtonGroup buttonGroup;
-  private javax.swing.JButton button_cancel;
-  private javax.swing.JButton button_ok;
-  private javax.swing.JLabel label_number;
-  private javax.swing.JRadioButton radio_after;
-  private javax.swing.JRadioButton radio_before;
-  private javax.swing.JRadioButton radio_begin;
-  private javax.swing.JRadioButton radio_end;
+  private javax.swing.JButton buttonOk;
+  private javax.swing.JLabel labelNumber;
+  private javax.swing.JRadioButton radioAfter;
+  private javax.swing.JRadioButton radioBefore;
+  private javax.swing.JRadioButton radioBegin;
+  private javax.swing.JRadioButton radioEnd;
   private javax.swing.JSeparator separator;
-  private javax.swing.JSpinner spinner_number;
+  private javax.swing.JSpinner spinnerNumber;
   // End of variables declaration//GEN-END:variables
+
 }
