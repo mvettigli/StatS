@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.*;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.table.*;
@@ -127,7 +128,7 @@ public class TableHandler extends javax.swing.JPanel {
     initMainTable();
     initScrollPane();
     initToolBar();
-    initLateralPane();
+    initLateralPane();    
   }
 
   /**
@@ -156,7 +157,8 @@ public class TableHandler extends javax.swing.JPanel {
   public int[] getSelectedColumns() {
     // store all indexes of selected columns in a list
     ArrayList<Integer> list = new ArrayList<>();
-    for (int i = 0; i < table.columns(); i++)
+    for (int i = colSelectionModel.getMinSelectionIndex();
+            i < colSelectionModel.getMaxSelectionIndex() + 1; i++)
       if (colSelectionModel.isSelectedIndex(i)) list.add(i);
     // convert a list of Integer to an int array
     int[] result = new int[list.size()];
@@ -173,7 +175,8 @@ public class TableHandler extends javax.swing.JPanel {
   public int[] getSelectedRows() {
     // store all indexes of selected columns in a list
     ArrayList<Integer> list = new ArrayList<>();
-    for (int i = 0; i < table.rows(); i++)
+    for (int i = rowSelectionModel.getMinSelectionIndex();
+            i < rowSelectionModel.getMaxSelectionIndex() + 1; i++)
       if (rowSelectionModel.isSelectedIndex(i)) list.add(i);
     // convert a list of Integer to an int array
     int[] result = new int[list.size()];
@@ -192,24 +195,24 @@ public class TableHandler extends javax.swing.JPanel {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    cols_PopUp = new javax.swing.JPopupMenu();
-    col_rename = new javax.swing.JMenuItem();
-    col_insert = new javax.swing.JMenuItem();
-    col_delete = new javax.swing.JMenuItem();
-    col_separator = new javax.swing.JPopupMenu.Separator();
-    col_type = new javax.swing.JMenu();
-    col_character = new javax.swing.JRadioButtonMenuItem();
-    col_numeric = new javax.swing.JRadioButtonMenuItem();
-    rows_PopUp = new javax.swing.JPopupMenu();
-    row_insert = new javax.swing.JMenuItem();
-    row_delete = new javax.swing.JMenuItem();
-    row_separator = new javax.swing.JPopupMenu.Separator();
-    row_color = new javax.swing.JMenu();
-    row_marker = new javax.swing.JMenu();
-    row_size = new javax.swing.JMenu();
+    colsPopup = new javax.swing.JPopupMenu();
+    menuRenameCols = new javax.swing.JMenuItem();
+    menuInsertCols = new javax.swing.JMenuItem();
+    menuDeleteCols = new javax.swing.JMenuItem();
+    separatorColsMenu = new javax.swing.JPopupMenu.Separator();
+    menuType = new javax.swing.JMenu();
+    menuCharacter = new javax.swing.JRadioButtonMenuItem();
+    menuNumeric = new javax.swing.JRadioButtonMenuItem();
+    rowsPopup = new javax.swing.JPopupMenu();
+    menuInsertRows = new javax.swing.JMenuItem();
+    menuDeleteRows = new javax.swing.JMenuItem();
+    separatorRowsMenu = new javax.swing.JPopupMenu.Separator();
+    menuColor = new javax.swing.JMenu();
+    menuMarker = new javax.swing.JMenu();
+    menuSize = new javax.swing.JMenu();
     toolBar = new javax.swing.JToolBar();
     buttonSidePane = new javax.swing.JButton();
-    jSeparator1 = new javax.swing.JToolBar.Separator();
+    separatoToolBar = new javax.swing.JToolBar.Separator();
     splitMain = new javax.swing.JSplitPane();
     scrollPane = new javax.swing.JScrollPane();
     splitLateral = new javax.swing.JSplitPane();
@@ -218,78 +221,78 @@ public class TableHandler extends javax.swing.JPanel {
     scrollRows = new javax.swing.JScrollPane();
     listRows = new javax.swing.JList();
 
-    col_rename.setText("Rename");
-    col_rename.addActionListener(new java.awt.event.ActionListener() {
+    menuRenameCols.setText("Rename");
+    menuRenameCols.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        col_renameActionPerformed(evt);
+        menuRenameColsActionPerformed(evt);
       }
     });
-    cols_PopUp.add(col_rename);
+    colsPopup.add(menuRenameCols);
 
-    col_insert.setText("Insert");
-    col_insert.addActionListener(new java.awt.event.ActionListener() {
+    menuInsertCols.setText("Insert");
+    menuInsertCols.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        col_insertActionPerformed(evt);
+        menuInsertColsActionPerformed(evt);
       }
     });
-    cols_PopUp.add(col_insert);
+    colsPopup.add(menuInsertCols);
 
-    col_delete.setText("Delete");
-    col_delete.addActionListener(new java.awt.event.ActionListener() {
+    menuDeleteCols.setText("Delete");
+    menuDeleteCols.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        col_deleteActionPerformed(evt);
+        menuDeleteColsActionPerformed(evt);
       }
     });
-    cols_PopUp.add(col_delete);
-    cols_PopUp.add(col_separator);
+    colsPopup.add(menuDeleteCols);
+    colsPopup.add(separatorColsMenu);
 
-    col_type.setText("Column type");
+    menuType.setText("Column type");
 
-    col_character.setSelected(true);
-    col_character.setText("Character");
-    col_character.addActionListener(new java.awt.event.ActionListener() {
+    menuCharacter.setSelected(true);
+    menuCharacter.setText("Character");
+    menuCharacter.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        col_characterActionPerformed(evt);
+        menuCharacterActionPerformed(evt);
       }
     });
-    col_type.add(col_character);
+    menuType.add(menuCharacter);
 
-    col_numeric.setSelected(true);
-    col_numeric.setText("Numeric");
-    col_numeric.addActionListener(new java.awt.event.ActionListener() {
+    menuNumeric.setSelected(true);
+    menuNumeric.setText("Numeric");
+    menuNumeric.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        col_numericActionPerformed(evt);
+        menuNumericActionPerformed(evt);
       }
     });
-    col_type.add(col_numeric);
+    menuType.add(menuNumeric);
 
-    cols_PopUp.add(col_type);
+    colsPopup.add(menuType);
 
-    row_insert.setText("Insert");
-    row_insert.addActionListener(new java.awt.event.ActionListener() {
+    menuInsertRows.setText("Insert");
+    menuInsertRows.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        row_insertActionPerformed(evt);
+        menuInsertRowsActionPerformed(evt);
       }
     });
-    rows_PopUp.add(row_insert);
+    rowsPopup.add(menuInsertRows);
 
-    row_delete.setText("Delete");
-    row_delete.addActionListener(new java.awt.event.ActionListener() {
+    menuDeleteRows.setText("Delete");
+    menuDeleteRows.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
-        row_deleteActionPerformed(evt);
+        menuDeleteRowsActionPerformed(evt);
       }
     });
-    rows_PopUp.add(row_delete);
-    rows_PopUp.add(row_separator);
+    rowsPopup.add(menuDeleteRows);
+    rowsPopup.add(separatorRowsMenu);
 
-    row_color.setText("Color");
-    rows_PopUp.add(row_color);
+    menuColor.setText("Color");
+    rowsPopup.add(menuColor);
 
-    row_marker.setText("Marker");
-    rows_PopUp.add(row_marker);
+    menuMarker.setText("Marker");
+    rowsPopup.add(menuMarker);
 
-    row_size.setText("Size");
-    rows_PopUp.add(row_size);
+    menuSize.setText("Size");
+    rowsPopup.add(menuSize);
 
     toolBar.setFloatable(false);
 
@@ -304,7 +307,7 @@ public class TableHandler extends javax.swing.JPanel {
       }
     });
     toolBar.add(buttonSidePane);
-    toolBar.add(jSeparator1);
+    toolBar.add(separatoToolBar);
 
     splitMain.setBorder(null);
     splitMain.setDividerLocation(150);
@@ -361,7 +364,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @param evt the action event.
    * @throws IllegalArgumentException if no column is selected.
    */
-  private void col_renameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_renameActionPerformed
+  private void menuRenameColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRenameColsActionPerformed
     // get selected columns and check for empty selection
     int[] selected_cols = getSelectedColumns();
     if (selected_cols.length == 0)
@@ -411,7 +414,7 @@ public class TableHandler extends javax.swing.JPanel {
     // update main table and column list
     mainTable.getTableHeader().updateUI();
     listColumns.updateUI();
-  }//GEN-LAST:event_col_renameActionPerformed
+  }//GEN-LAST:event_menuRenameColsActionPerformed
 
   /**
    * Handles column insertion upon selection. Because the methods uses
@@ -426,7 +429,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @param evt the action event.
    * @throws IllegalArgumentException if no column is selected.
    */
-  private void col_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_insertActionPerformed
+  private void menuInsertColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInsertColsActionPerformed
     // get selected columns and check for empty selection
     int[] selected_cols = getSelectedColumns();
     if (selected_cols.length == 0) throw new IllegalArgumentException(
@@ -529,7 +532,7 @@ public class TableHandler extends javax.swing.JPanel {
     }
     // update main table and column list    
     listColumns.updateUI();
-  }//GEN-LAST:event_col_insertActionPerformed
+  }//GEN-LAST:event_menuInsertColsActionPerformed
 
   /**
    * Handles column removal upon selection. Because the methods uses
@@ -542,7 +545,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @param evt the action event.
    * @throws IllegalArgumentException if no column is selected.
    */
-  private void col_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_deleteActionPerformed
+  private void menuDeleteColsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteColsActionPerformed
     // get selected columns and check for empty selection
     int[] selected_cols = getSelectedColumns();
     if (selected_cols.length == 0)
@@ -573,8 +576,8 @@ public class TableHandler extends javax.swing.JPanel {
       table.removeColumn(index);
     }
     // update column list
-    listColumns.updateUI();
-  }//GEN-LAST:event_col_deleteActionPerformed
+    updateColumnList();
+  }//GEN-LAST:event_menuDeleteColsActionPerformed
 
   /**
    * Handles row insertion upon selection. Because the methods uses currently
@@ -585,7 +588,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @param evt the action event.
    * @throws IllegalArgumentException if no row is selected.
    */
-  private void row_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_row_insertActionPerformed
+  private void menuInsertRowsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInsertRowsActionPerformed
     // check if row selection is null
     int[] selected_rows = getSelectedRows();
     if (selected_rows.length == 0) throw new IllegalArgumentException(
@@ -636,7 +639,8 @@ public class TableHandler extends javax.swing.JPanel {
     // repaint components
     rowTable.updateUI();
     mainTable.updateUI();
-  }//GEN-LAST:event_row_insertActionPerformed
+    updateRowList();
+  }//GEN-LAST:event_menuInsertRowsActionPerformed
 
   /**
    * Handles row removal upon selection. Because the methods uses currently
@@ -649,7 +653,7 @@ public class TableHandler extends javax.swing.JPanel {
    * @param evt the action event.
    * @throws IllegalArgumentException if no row is selected.
    */
-  private void row_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_row_deleteActionPerformed
+  private void menuDeleteRowsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteRowsActionPerformed
     // check if row selection is null
     int[] selected_rows = getSelectedRows();
     if (selected_rows.length == 0) throw new IllegalArgumentException(
@@ -674,7 +678,8 @@ public class TableHandler extends javax.swing.JPanel {
     rowSelectionModel.clearSelection();
     rowTable.updateUI();
     mainTable.updateUI();
-  }//GEN-LAST:event_row_deleteActionPerformed
+    updateRowList();
+  }//GEN-LAST:event_menuDeleteRowsActionPerformed
 
   /**
    * Handles lateral panel visibility. The lateral panel is shown or hidden
@@ -695,9 +700,9 @@ public class TableHandler extends javax.swing.JPanel {
     } else splitMain.setDividerLocation(lateralPaneWidth);
   }//GEN-LAST:event_buttonSidePaneActionPerformed
 
-  private void col_characterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_characterActionPerformed
+  private void menuCharacterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCharacterActionPerformed
     // check if character menu item is already toggled
-    if (!col_character.isSelected()) return;
+    if (!menuCharacter.isSelected()) return;
     // check if column selection is empty
     int[] selectedCols = getSelectedColumns();
     if (selectedCols.length == 0) throw new IllegalArgumentException(
@@ -723,11 +728,11 @@ public class TableHandler extends javax.swing.JPanel {
     // update column list and scroll pane
     listColumns.updateUI();
     scrollPane.updateUI();
-  }//GEN-LAST:event_col_characterActionPerformed
+  }//GEN-LAST:event_menuCharacterActionPerformed
 
-  private void col_numericActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col_numericActionPerformed
+  private void menuNumericActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNumericActionPerformed
     // check if numeric menu item is already toggled
-    if (!col_numeric.isSelected()) return;
+    if (!menuNumeric.isSelected()) return;
     // check if column selection is empty
     int[] selectedCols = getSelectedColumns();
     if (selectedCols.length == 0) throw new IllegalArgumentException(
@@ -753,31 +758,31 @@ public class TableHandler extends javax.swing.JPanel {
     // update column list and scroll pane
     listColumns.updateUI();
     scrollPane.updateUI();
-  }//GEN-LAST:event_col_numericActionPerformed
+  }//GEN-LAST:event_menuNumericActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton buttonSidePane;
-  private javax.swing.JRadioButtonMenuItem col_character;
-  private javax.swing.JMenuItem col_delete;
-  private javax.swing.JMenuItem col_insert;
-  private javax.swing.JRadioButtonMenuItem col_numeric;
-  private javax.swing.JMenuItem col_rename;
-  private javax.swing.JPopupMenu.Separator col_separator;
-  private javax.swing.JMenu col_type;
-  private javax.swing.JPopupMenu cols_PopUp;
-  private javax.swing.JToolBar.Separator jSeparator1;
+  private javax.swing.JPopupMenu colsPopup;
   private javax.swing.JList listColumns;
   private javax.swing.JList listRows;
-  private javax.swing.JMenu row_color;
-  private javax.swing.JMenuItem row_delete;
-  private javax.swing.JMenuItem row_insert;
-  private javax.swing.JMenu row_marker;
-  private javax.swing.JPopupMenu.Separator row_separator;
-  private javax.swing.JMenu row_size;
-  private javax.swing.JPopupMenu rows_PopUp;
+  private javax.swing.JRadioButtonMenuItem menuCharacter;
+  private javax.swing.JMenu menuColor;
+  private javax.swing.JMenuItem menuDeleteCols;
+  private javax.swing.JMenuItem menuDeleteRows;
+  private javax.swing.JMenuItem menuInsertCols;
+  private javax.swing.JMenuItem menuInsertRows;
+  private javax.swing.JMenu menuMarker;
+  private javax.swing.JRadioButtonMenuItem menuNumeric;
+  private javax.swing.JMenuItem menuRenameCols;
+  private javax.swing.JMenu menuSize;
+  private javax.swing.JMenu menuType;
+  private javax.swing.JPopupMenu rowsPopup;
   private javax.swing.JScrollPane scrollColumns;
   private javax.swing.JScrollPane scrollPane;
   private javax.swing.JScrollPane scrollRows;
+  private javax.swing.JToolBar.Separator separatoToolBar;
+  private javax.swing.JPopupMenu.Separator separatorColsMenu;
+  private javax.swing.JPopupMenu.Separator separatorRowsMenu;
   private javax.swing.JSplitPane splitLateral;
   private javax.swing.JSplitPane splitMain;
   private javax.swing.JToolBar toolBar;
@@ -787,31 +792,34 @@ public class TableHandler extends javax.swing.JPanel {
    * Initializes both row and column selection model.
    */
   private void initSelectionModels() {
-    // initialize row and column selection models
+    
+    /* initialize row and column selection models */
     rowSelectionModel = new DefaultListSelectionModel();
     colSelectionModel = new DefaultListSelectionModel();
-    // refresh row and main table upon selection
-    rowSelectionModel.addListSelectionListener(
-            new ListSelectionListener() {
+    
+    /* refresh components upon selection change */
+    rowSelectionModel.addListSelectionListener(new ListSelectionListener() {
       /**
-       * Refreshes main table upon row selection.
+       * Refreshes main table and row list upon row selection.
        */
       @Override
       public void valueChanged(ListSelectionEvent e) {
         mainTable.repaint();
+        updateRowList();
       }
     });
-    colSelectionModel.addListSelectionListener(
-            new ListSelectionListener() {
+    colSelectionModel.addListSelectionListener(new ListSelectionListener() {
       /**
-       * Refreshes main table and header upon column selection.
+       * Refreshes main table, header and column list upon column selection.
        */
       @Override
       public void valueChanged(ListSelectionEvent e) {
         mainTable.getTableHeader().repaint();
         mainTable.repaint();
+        updateColumnList();
       }
     });
+    
   }
 
   /**
@@ -903,13 +911,13 @@ public class TableHandler extends javax.swing.JPanel {
               rowSelectionModel.addSelectionInterval(rowIndex, rowIndex);
             }
             // set menu item enable state
-            row_insert.setEnabled(editable);
-            row_delete.setEnabled(editable);
-            row_color.setEnabled(true);
-            row_marker.setEnabled(true);
-            row_size.setEnabled(true);
+            menuInsertRows.setEnabled(editable);
+            menuDeleteRows.setEnabled(editable);
+            menuColor.setEnabled(true);
+            menuMarker.setEnabled(true);
+            menuSize.setEnabled(true);
             // show the row popup
-            rows_PopUp.show(rowTable, e.getX(), e.getY());
+            rowsPopup.show(rowTable, e.getX(), e.getY());
           }
         }
       }
@@ -942,7 +950,7 @@ public class TableHandler extends javax.swing.JPanel {
     // and row-column selection model
     mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     mainTable.setColumnSelectionAllowed(true);
-    mainTable.setSelectionModel(rowSelectionModel);
+    mainTable.setSelectionModel(rowSelectionModel);    
     mainTable.getColumnModel().setSelectionModel(colSelectionModel);
     // set default cell and table header renderers for visual appearance
     mainTable.setDefaultRenderer(Object.class, new TableCellRenderer() {
@@ -1065,7 +1073,7 @@ public class TableHandler extends javax.swing.JPanel {
               mainTable.addColumn(tableColumn);
             }
             // update column list
-            listColumns.updateUI();
+            updateColumnList();
           }
           // this return statement prevents improper usage of null index
           return;
@@ -1110,28 +1118,28 @@ public class TableHandler extends javax.swing.JPanel {
             colSelectionModel.addSelectionInterval(colIndex, colIndex);
           }
           // set menu item enable state
-          col_character.setEnabled(editable);
-          col_numeric.setEnabled(editable);
-          col_rename.setEnabled(editable);
-          col_insert.setEnabled(editable);
-          col_delete.setEnabled(editable);
+          menuCharacter.setEnabled(editable);
+          menuNumeric.setEnabled(editable);
+          menuRenameCols.setEnabled(editable);
+          menuInsertCols.setEnabled(editable);
+          menuDeleteCols.setEnabled(editable);
           // set column type menu on current selection
           int[] selected_cols = getSelectedColumns();
           if (selected_cols.length == 1)
           {
             // if single column is selected show its type
-            col_character.setSelected(table.getColumnType(selected_cols[0])
+            menuCharacter.setSelected(table.getColumnType(selected_cols[0])
                     == Data.CHARACTER);
-            col_numeric.setSelected(table.getColumnType(selected_cols[0])
+            menuNumeric.setSelected(table.getColumnType(selected_cols[0])
                     == Data.NUMERIC);
           } else
           {
             // for multiple selection let both unselected
-            col_character.setSelected(false);
-            col_numeric.setSelected(false);
+            menuCharacter.setSelected(false);
+            menuNumeric.setSelected(false);
           }
           // show the column popup
-          cols_PopUp.show(mainTable.getTableHeader(), e.getX(), e.getY());
+          colsPopup.show(mainTable.getTableHeader(), e.getX(), e.getY());
         }
 
       }
@@ -1347,6 +1355,36 @@ public class TableHandler extends javax.swing.JPanel {
         return element;
       }
     });
+    updateColumnList();
+    updateRowList();
+  }
+
+  /**
+   * Updates column list. The function changes border title and updates column
+   * list. To be used whenever column structure or selection is modified.
+   */
+  private void updateColumnList() {
+    // get column list border and reset the title
+    TitledBorder border = (TitledBorder) scrollColumns.getBorder();
+    border.setTitle("Columns (" + getSelectedColumns().length
+            + "/" + table.columns() + ")");
+    // update UI of scroll pane and column list
+    scrollColumns.updateUI();
+    listColumns.updateUI();
+  }
+
+  /**
+   * Updates row list. The function changes border title and updates rows
+   * list. To be used whenever rows structure or selection is modified.4
+   */
+  private void updateRowList() {
+    // get row list border and reset the title    
+    TitledBorder border = (TitledBorder) scrollRows.getBorder();
+    border.setTitle("Rows (" + getSelectedRows().length
+            + "/" + table.rows() + ")");
+    // update UI of scroll pane and row list
+    scrollRows.updateUI();
+    listRows.updateUI();
   }
 
 }

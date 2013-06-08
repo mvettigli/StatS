@@ -2,100 +2,100 @@
 
 <Form version="1.3" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
-    <Container class="javax.swing.JPopupMenu" name="cols_PopUp">
+    <Container class="javax.swing.JPopupMenu" name="colsPopup">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <MenuItem class="javax.swing.JMenuItem" name="col_rename">
+        <MenuItem class="javax.swing.JMenuItem" name="menuRenameCols">
           <Properties>
             <Property name="text" type="java.lang.String" value="Rename"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_renameActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuRenameColsActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="col_insert">
+        <MenuItem class="javax.swing.JMenuItem" name="menuInsertCols">
           <Properties>
             <Property name="text" type="java.lang.String" value="Insert"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_insertActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuInsertColsActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="col_delete">
+        <MenuItem class="javax.swing.JMenuItem" name="menuDeleteCols">
           <Properties>
             <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_deleteActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteColsActionPerformed"/>
           </Events>
         </MenuItem>
-        <Component class="javax.swing.JPopupMenu$Separator" name="col_separator">
+        <Component class="javax.swing.JPopupMenu$Separator" name="separatorColsMenu">
         </Component>
-        <Menu class="javax.swing.JMenu" name="col_type">
+        <Menu class="javax.swing.JMenu" name="menuType">
           <Properties>
             <Property name="text" type="java.lang.String" value="Column type"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="col_character">
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuCharacter">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Character"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_characterActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuCharacterActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="col_numeric">
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="menuNumeric">
               <Properties>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="Numeric"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="col_numericActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuNumericActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPopupMenu" name="rows_PopUp">
+    <Container class="javax.swing.JPopupMenu" name="rowsPopup">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <MenuItem class="javax.swing.JMenuItem" name="row_insert">
+        <MenuItem class="javax.swing.JMenuItem" name="menuInsertRows">
           <Properties>
             <Property name="text" type="java.lang.String" value="Insert"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="row_insertActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuInsertRowsActionPerformed"/>
           </Events>
         </MenuItem>
-        <MenuItem class="javax.swing.JMenuItem" name="row_delete">
+        <MenuItem class="javax.swing.JMenuItem" name="menuDeleteRows">
           <Properties>
             <Property name="text" type="java.lang.String" value="Delete"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="row_deleteActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteRowsActionPerformed"/>
           </Events>
         </MenuItem>
-        <Component class="javax.swing.JPopupMenu$Separator" name="row_separator">
+        <Component class="javax.swing.JPopupMenu$Separator" name="separatorRowsMenu">
         </Component>
-        <Menu class="javax.swing.JMenu" name="row_color">
+        <Menu class="javax.swing.JMenu" name="menuColor">
           <Properties>
             <Property name="text" type="java.lang.String" value="Color"/>
           </Properties>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="row_marker">
+        <Menu class="javax.swing.JMenu" name="menuMarker">
           <Properties>
             <Property name="text" type="java.lang.String" value="Marker"/>
           </Properties>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="row_size">
+        <Menu class="javax.swing.JMenu" name="menuSize">
           <Properties>
             <Property name="text" type="java.lang.String" value="Size"/>
           </Properties>
@@ -154,7 +154,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonSidePaneActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
+        <Component class="javax.swing.JToolBar$Separator" name="separatoToolBar">
         </Component>
       </SubComponents>
     </Container>
