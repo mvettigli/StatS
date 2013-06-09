@@ -89,6 +89,24 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Color"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="stats.graphics.Palette" name="palette">
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="paletteActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuMoreColors">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/stats/gui/images/palette.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="More colors..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuMoreColorsActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="menuMarker">
           <Properties>

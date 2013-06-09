@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.*;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.table.*;
@@ -128,7 +129,7 @@ public class TableHandler extends javax.swing.JPanel {
     initMainTable();
     initScrollPane();
     initToolBar();
-    initLateralPane();    
+    initLateralPane();
   }
 
   /**
@@ -208,6 +209,8 @@ public class TableHandler extends javax.swing.JPanel {
     menuDeleteRows = new javax.swing.JMenuItem();
     separatorRowsMenu = new javax.swing.JPopupMenu.Separator();
     menuColor = new javax.swing.JMenu();
+    palette = new stats.graphics.Palette();
+    menuMoreColors = new javax.swing.JMenuItem();
     menuMarker = new javax.swing.JMenu();
     menuSize = new javax.swing.JMenu();
     toolBar = new javax.swing.JToolBar();
@@ -286,6 +289,23 @@ public class TableHandler extends javax.swing.JPanel {
     rowsPopup.add(separatorRowsMenu);
 
     menuColor.setText("Color");
+
+    palette.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        paletteActionPerformed(evt);
+      }
+    });
+    menuColor.add(palette);
+
+    menuMoreColors.setIcon(new javax.swing.ImageIcon(getClass().getResource("/stats/gui/images/palette.png"))); // NOI18N
+    menuMoreColors.setText("More colors...");
+    menuMoreColors.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuMoreColorsActionPerformed(evt);
+      }
+    });
+    menuColor.add(menuMoreColors);
+
     rowsPopup.add(menuColor);
 
     menuMarker.setText("Marker");
@@ -760,6 +780,16 @@ public class TableHandler extends javax.swing.JPanel {
     scrollPane.updateUI();
   }//GEN-LAST:event_menuNumericActionPerformed
 
+  private void paletteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paletteActionPerformed
+    System.out.println(palette.getSelectedColor());
+    rowsPopup.setVisible(false);
+    palette.resetSelection();
+  }//GEN-LAST:event_paletteActionPerformed
+
+  private void menuMoreColorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuMoreColorsActionPerformed
+    
+  }//GEN-LAST:event_menuMoreColorsActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton buttonSidePane;
   private javax.swing.JPopupMenu colsPopup;
@@ -772,10 +802,12 @@ public class TableHandler extends javax.swing.JPanel {
   private javax.swing.JMenuItem menuInsertCols;
   private javax.swing.JMenuItem menuInsertRows;
   private javax.swing.JMenu menuMarker;
+  private javax.swing.JMenuItem menuMoreColors;
   private javax.swing.JRadioButtonMenuItem menuNumeric;
   private javax.swing.JMenuItem menuRenameCols;
   private javax.swing.JMenu menuSize;
   private javax.swing.JMenu menuType;
+  private stats.graphics.Palette palette;
   private javax.swing.JPopupMenu rowsPopup;
   private javax.swing.JScrollPane scrollColumns;
   private javax.swing.JScrollPane scrollPane;
@@ -792,11 +824,11 @@ public class TableHandler extends javax.swing.JPanel {
    * Initializes both row and column selection model.
    */
   private void initSelectionModels() {
-    
+
     /* initialize row and column selection models */
     rowSelectionModel = new DefaultListSelectionModel();
     colSelectionModel = new DefaultListSelectionModel();
-    
+
     /* refresh components upon selection change */
     rowSelectionModel.addListSelectionListener(new ListSelectionListener() {
       /**
@@ -819,7 +851,7 @@ public class TableHandler extends javax.swing.JPanel {
         updateColumnList();
       }
     });
-    
+
   }
 
   /**
@@ -950,7 +982,7 @@ public class TableHandler extends javax.swing.JPanel {
     // and row-column selection model
     mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     mainTable.setColumnSelectionAllowed(true);
-    mainTable.setSelectionModel(rowSelectionModel);    
+    mainTable.setSelectionModel(rowSelectionModel);
     mainTable.getColumnModel().setSelectionModel(colSelectionModel);
     // set default cell and table header renderers for visual appearance
     mainTable.setDefaultRenderer(Object.class, new TableCellRenderer() {
