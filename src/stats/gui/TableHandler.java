@@ -519,7 +519,7 @@ public class TableHandler extends javax.swing.JPanel {
     TableColumnModel model = mainTable.getColumnModel();
     String rootName = dialog.getColumnName();
     int number = dialog.getColumnNumber();
-    DataTypes type = dialog.getColumnType();
+    int type = dialog.getColumnType();
     // check if the names of the new columns are valid
     boolean error_state = true;
     String error_log = new String();
@@ -803,9 +803,9 @@ public class TableHandler extends javax.swing.JPanel {
     // check for data integrity
     boolean areColumnContertible = true;
     for (int i = 0; i < selectedCols.length; i++)
-      if (table.getColumnType(selectedCols[i]) != DataTypes.CHARACTER)
+      if (table.getColumnType(selectedCols[i]) != Data.CHARACTER)
         areColumnContertible &= table.isColumnConvertible(
-                selectedCols[i], DataTypes.CHARACTER);
+                selectedCols[i], Data.CHARACTER);
     // show confirmation message if data loss will occur
     if (!areColumnContertible)
     {
@@ -817,7 +817,7 @@ public class TableHandler extends javax.swing.JPanel {
     }
     // convert all selected columns to character type
     for (int i = 0; i < selectedCols.length; i++)
-      table.convertColumn(selectedCols[i], DataTypes.CHARACTER);
+      table.convertColumn(selectedCols[i], Data.CHARACTER);
     // update column list and scroll pane
     listColumns.updateUI();
     scrollPane.updateUI();
@@ -840,9 +840,9 @@ public class TableHandler extends javax.swing.JPanel {
     // check for data integrity
     boolean areColumnContertible = true;
     for (int i = 0; i < selectedCols.length; i++)
-      if (table.getColumnType(selectedCols[i]) != DataTypes.NUMERIC)
+      if (table.getColumnType(selectedCols[i]) != Data.NUMERIC)
         areColumnContertible &= table.isColumnConvertible(
-                selectedCols[i], DataTypes.NUMERIC);
+                selectedCols[i], Data.NUMERIC);
     // show confirmation message if data loss will occur
     if (!areColumnContertible)
     {
@@ -854,7 +854,7 @@ public class TableHandler extends javax.swing.JPanel {
     }
     // convert all selected columns to numeric type
     for (int i = 0; i < selectedCols.length; i++)
-      table.convertColumn(selectedCols[i], DataTypes.NUMERIC);
+      table.convertColumn(selectedCols[i], Data.NUMERIC);
     // update column list and scroll pane
     listColumns.updateUI();
     scrollPane.updateUI();
@@ -1154,15 +1154,15 @@ public class TableHandler extends javax.swing.JPanel {
         // set alignment based on Data type
         switch (data.type())
         {
-          case NUMERIC:
+          case Data.NUMERIC:
             cell.setHorizontalAlignment(JLabel.RIGHT);
             break;
-          case CHARACTER:
-          case UNDEFINED:
+          case Data.CHARACTER:
+          case Data.UNDEFINED:
             cell.setHorizontalAlignment(JLabel.LEFT);
         }
         // set cell content based on Data value and type
-        if (data.isEmpty() && data.type() == DataTypes.NUMERIC)
+        if (data.isEmpty() && data.type() == Data.NUMERIC)
           cell.setText(".");
         else cell.setText(data.toString());
         // set cell foreground and background based on current selection
@@ -1316,9 +1316,9 @@ public class TableHandler extends javax.swing.JPanel {
           {
             // if single column is selected show its type
             menuCharacter.setSelected(table.getColumnType(selected_cols[0])
-                    == DataTypes.CHARACTER);
+                    == Data.CHARACTER);
             menuNumeric.setSelected(table.getColumnType(selected_cols[0])
-                    == DataTypes.NUMERIC);
+                    == Data.NUMERIC);
           } else
           {
             // for multiple selection let both unselected
@@ -1525,8 +1525,20 @@ public class TableHandler extends javax.swing.JPanel {
         // set label text with column name
         element.setText(table.getColumnName(index));
         // set icon based on column type
+        String iconURL = new String();
+        switch (table.getColumnType(index))
+        {
+          case Data.CHARACTER:
+            iconURL = "/stats/gui/images/character.png";
+            break;
+          case Data.NUMERIC:
+            iconURL = "/stats/gui/images/numeric.png";
+            break;
+          case Data.UNDEFINED:
+          default:
+        }
         element.setIconTextGap(7);
-        element.setIcon(table.getColumnType(index).getIcon());
+        element.setIcon(new ImageIcon(getClass().getResource(iconURL)));
         // set background based on selection
         element.setForeground(FORECOLOR_CELL);
         if (isSelected) element.setBackground(BACKCOLOR_SELECTED_CELL);

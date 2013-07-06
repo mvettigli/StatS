@@ -15,28 +15,20 @@ import java.util.ArrayList;
  * Table object}
  *
  * @author M. Vettigli
- * @version 3.0
+ * @version 2.0
  */
 public class Table {
 
-  //<editor-fold defaultstate="collapsed" desc="Static Members">
   /**
-   * Default number of columns inserted during initialization.
+   * Unique identifier for column naming.
    */
-  public final static int DEFAULT_COLS = 1;
-
-  /**
-   * Default number of rows inserted during initialization.
-   */
-  public final static int DEFAULT_ROWS = 10;
+  private int untitled_column;
 
   /**
    * Unique identifier for table naming.
    */
   private static int untitled_table = 1;
-  //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="Private Members">
   /**
    * Variable storing the name of the table.
    */
@@ -53,18 +45,21 @@ public class Table {
   private int table_rows;
 
   /**
-   * Unique identifier for column naming.
-   */
-  private int untitled_column;
-
-  /**
    * The {@code columns} array stores the actual data table as a collection
    * of {@code Array} objects.
    */
   private ArrayList<Array> columns;
-  //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="Constructors">
+  /**
+   * Default number of columns inserted during initialization.
+   */
+  public final static int DEFAULT_COLS = 1;
+
+  /**
+   * Default number of rows inserted during initialization.
+   */
+  public final static int DEFAULT_ROWS = 10;
+
   /**
    * Default constructor for {@code Table} class. The table is initialized
    * with untitled name and one {@code DataType.CHARACTER} column of 10 rows.
@@ -81,7 +76,7 @@ public class Table {
    */
   public Table(String name) {
 
-    // initialize column array with a single Array
+    // initialize column array with a single Array 
     // of DEFAULT_ROWS Characher elements
     untitled_column = 1;
     columns = new ArrayList<>();
@@ -105,17 +100,6 @@ public class Table {
       table_name = name;
     }
   }
-  //</editor-fold>
-
-  //<editor-fold defaultstate="collapsed" desc="Getters">
-  /**
-   * The function returns the name of the {@code Table} object.
-   *
-   * @return the name of the table.
-   */
-  public String name() {
-    return table_name;
-  }
 
   /**
    * The function returns the number of columns in the {@code Table}
@@ -137,6 +121,28 @@ public class Table {
   }
 
   /**
+   * The function returns the name of the {@code Table} object.
+   *
+   * @return the name of the table.
+   */
+  public String name() {
+    return table_name;
+  }
+
+  /**
+   * The function sets the name of the {@code Table} object. Null names are
+   * not allowed.
+   *
+   * @param name the new name of the table.
+   * @return true if successful, else false.
+   */
+  public boolean setName(String name) {
+    if (name.isEmpty()) return false;
+    table_name = name;
+    return true;
+  }
+
+  /**
    * The function returns the name of the column at a given position in
    * the {@code Table} object.
    *
@@ -149,6 +155,28 @@ public class Table {
   }
 
   /**
+   * Sets the name of a column of {@code Table} object at a specified
+   * position.
+   *
+   * @param col the index of the column.
+   * @param name new name of the column.
+   * @return true is successful, else false.
+   * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
+   */
+  public boolean setColumnName(int col, String name) {
+    // check if index is valid
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    // check if name column is calid
+    if (name.isEmpty()) return false;
+    // check if the name is already used as column name in the table
+    for (int i = 0; i < table_cols; i++)
+      if (columns.get(i).name().equals(name) && i != col) return false;
+    columns.get(col).setName(name);
+    return true;
+  }
+
+  /**
    * Returns the type of data stored in a given column in the {@code
    * Table} object. The returned type is a member of the {@link
    * stats.core.DataType} enumeration.
@@ -157,7 +185,7 @@ public class Table {
    * @return data type of the column as {@link stats.core.DataType}.
    * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
    */
-  public DataTypes getColumnType(int col) {
+  public int getColumnType(int col) {
     if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
               "col=" + col + " is not a valid column index in " + table_name);
     return columns.get(col).type();
@@ -212,7 +240,7 @@ public class Table {
    * @return true if columns is convertible without data loss, else false.
    * @throws ArrayIndexOutOfBoundsException if column index is not valid.
    */
-  public boolean isColumnConvertible(int col, DataTypes type) {
+  public boolean isColumnConvertible(int col, int type) {
     // check if col index is valid
     if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
               "col=" + col + " is not a valid column index in " + table_name);
@@ -220,7 +248,7 @@ public class Table {
     if (type == getColumnType(col)) return false;
     switch (type)
     {
-      case NUMERIC:
+      case Data.NUMERIC:
         try
         {
           for (int i = 0; i < table_rows; i++)
@@ -231,9 +259,9 @@ public class Table {
           return false;
         }
         break;
-      case CHARACTER:
+      case Data.CHARACTER:
         break;
-      case UNDEFINED:
+      case Data.UNDEFINED:
       default:
         return false;
     }
@@ -241,120 +269,13 @@ public class Table {
   }
 
   /**
-   * Returns the data stored in the cell pointed by given column and row
-   * indexes. The return value is a {@link Data} reference.
-   *
-   * @param col the column index of the cell.
-   * @param row the row index of the cell.
-   * @return a {@link Data} reference to the content of the cell.
-   * @throws ArrayIndexOutOfBoundsException if the column and row indexes are
-   * not valid.
-   */
-  public Data get(int col, int row) {
-    // check if row and col indexes are valid
-    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
-              "col=" + col + " is not a valid column index in " + table_name);
-    if (!isRowIndex(row)) throw new ArrayIndexOutOfBoundsException(
-              "row=" + row + " is not a valid row index in " + table_name);
-    // return the content of the cell
-    return columns.get(col).get(row);
-  }
-  //</editor-fold>
-
-  //<editor-fold defaultstate="collapsed" desc="Setters">
-  /**
-   * The function sets the name of the {@code Table} object. Null names are
-   * not allowed.
-   *
-   * @param name the new name of the table.
-   * @return true if successful, else false.
-   */
-  public boolean setName(String name) {
-    if (name.isEmpty()) return false;
-    table_name = name;
-    return true;
-  }
-
-  /**
-   * Sets the name of a column of {@code Table} object at a specified
-   * position.
-   *
-   * @param col the index of the column.
-   * @param name new name of the column.
-   * @return true is successful, else false.
-   * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
-   */
-  public boolean setColumnName(int col, String name) {
-    // check if index is valid
-    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
-              "col=" + col + " is not a valid column index in " + table_name);
-    // check if name column is calid
-    if (name.isEmpty()) return false;
-    // check if the name is already used as column name in the table
-    for (int i = 0; i < table_cols; i++)
-      if (columns.get(i).name().equals(name) && i != col) return false;
-    columns.get(col).setName(name);
-    return true;
-  }
-
-  /**
-   * Sets the content of the cell pointed by column and row indexes.
-   * The new content is provided by means of a {@link Data} reference. A check
-   * for type consistency is done before the assignment.
-   *
-   * @param col the column index of the cell.
-   * @param row the row index of the cell.
-   * @param data new {@link Data} reference of the cell.
-   * @return true if successful, else false.
-   * @throws ArrayIndexOutOfBoundsException if the column and row indexes are
-   * not valid.
-   *
-   */
-  public boolean set(int col, int row, Data data) {
-    // check if col and row indexes are valid
-    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
-              "col=" + col + " is not a valid column index in " + table_name);
-    if (!isRowIndex(row)) throw new ArrayIndexOutOfBoundsException(
-              "row=" + row + " is not a valid row index in " + table_name);
-    // check if DataType of data is valid
-    if (columns.get(col).type() != data.type()) return false;
-    // set content of the cell to new value
-    columns.get(col).set(row, data.clone());
-    return true;
-  }
-
-  /**
-   * Sets the content of the cell pointed by column and row indexes parsing
-   * a string data.
-   *
-   * @param col the column index of the cell.
-   * @param row the row index of the cell.
-   * @param data the string content to be parsed.
-   * @return true if successful, else false.
-   * @throws ArrayIndexOutOfBoundsException if the column and row indexes are
-   * not valid.
-   *
-   */
-  public boolean set(int col, int row, String data) {
-    // check if col and row indexes are valid
-    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
-              "col=" + col + " is not a valid column index in " + table_name);
-    if (!isRowIndex(row)) throw new ArrayIndexOutOfBoundsException(
-              "row=" + row + " is not a valid row index in " + table_name);
-    // set content of the cell to new value
-    return columns.get(col).set(row, data);
-  }
-  //</editor-fold>
-
-  //<editor-fold defaultstate="collapsed" desc="Public Members">
-  /**
    * Inserts a new column of at the beginning of the {@code Table} object.
    * The type of the column is {@code DataType.CHARACTER} by default.
    *
    * @return true if successful, else false.
    */
   public boolean insertColumn() {
-    return this.insertColumns(0, DataTypes.CHARACTER, 1);
+    return this.insertColumns(0, Data.CHARACTER, 1);
   }
 
   /**
@@ -366,7 +287,7 @@ public class Table {
    * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
    */
   public boolean insertColumn(int col) {
-    return this.insertColumns(col, DataTypes.CHARACTER, 1);
+    return this.insertColumns(col, Data.CHARACTER, 1);
   }
 
   /**
@@ -378,7 +299,7 @@ public class Table {
    * @return true if successful, else false.
    * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
    */
-  public boolean insertColumn(int col, DataTypes type) {
+  public boolean insertColumn(int col, int type) {
     return this.insertColumns(col, type, 1);
   }
 
@@ -391,7 +312,7 @@ public class Table {
    * @return true if successful, else false.
    */
   public boolean insertColumns(int number) {
-    return this.insertColumns(0, DataTypes.CHARACTER, number);
+    return this.insertColumns(0, Data.CHARACTER, number);
   }
 
   /**
@@ -402,7 +323,7 @@ public class Table {
    * @param number number of columns to be inserted.
    * @return true if successful, else false.
    */
-  public boolean insertColumns(DataTypes type, int number) {
+  public boolean insertColumns(int type, int number) {
     return this.insertColumns(0, type, number);
   }
 
@@ -416,7 +337,7 @@ public class Table {
    * @return true if successful, else false.
    * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
    */
-  public boolean insertColumns(int col, DataTypes type, int number) {
+  public boolean insertColumns(int col, int type, int number) {
     // check if index is valid
     if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
               "col=" + col + " is not a valid column index in " + table_name);
@@ -436,7 +357,7 @@ public class Table {
    * @return true if successful, else false.
    */
   public boolean addColumn() {
-    return this.addColumns(DataTypes.CHARACTER, 1);
+    return this.addColumns(Data.CHARACTER, 1);
   }
 
   /**
@@ -446,7 +367,7 @@ public class Table {
    * @param type the data type of the column to be added.
    * @return true if successful, else false.
    */
-  public boolean addColumn(DataTypes type) {
+  public boolean addColumn(int type) {
     return this.addColumns(type, 1);
   }
 
@@ -458,7 +379,7 @@ public class Table {
    * @return true if successful, else false.
    */
   public boolean addColumns(int number) {
-    return this.addColumns(DataTypes.CHARACTER, number);
+    return this.addColumns(Data.CHARACTER, number);
   }
 
   /**
@@ -469,7 +390,7 @@ public class Table {
    * @param number number of columns to be added.
    * @return true if successful, else false.
    */
-  public boolean addColumns(DataTypes type, int number) {
+  public boolean addColumns(int type, int number) {
     // check if number is valid
     if (number < 1) return false;
     // add new columns to the table
@@ -639,6 +560,74 @@ public class Table {
   }
 
   /**
+   * Returns the data stored in the cell pointed by given column and row
+   * indexes. The return value is a {@link Data} reference.
+   *
+   * @param col the column index of the cell.
+   * @param row the row index of the cell.
+   * @return a {@link Data} reference to the content of the cell.
+   * @throws ArrayIndexOutOfBoundsException if the column and row indexes are
+   * not valid.
+   */
+  public Data get(int col, int row) {
+    // check if row and col indexes are valid
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    if (!isRowIndex(row)) throw new ArrayIndexOutOfBoundsException(
+              "row=" + row + " is not a valid row index in " + table_name);
+    // return the content of the cell
+    return columns.get(col).get(row);
+  }
+
+  /**
+   * Sets the content of the cell pointed by column and row indexes.
+   * The new content is provided by means of a {@link Data} reference. A check
+   * for type consistency is done before the assignment.
+   *
+   * @param col the column index of the cell.
+   * @param row the row index of the cell.
+   * @param data new {@link Data} reference of the cell.
+   * @return true if successful, else false.
+   * @throws ArrayIndexOutOfBoundsException if the column and row indexes are
+   * not valid.
+   *
+   */
+  public boolean set(int col, int row, Data data) {
+    // check if col and row indexes are valid
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    if (!isRowIndex(row)) throw new ArrayIndexOutOfBoundsException(
+              "row=" + row + " is not a valid row index in " + table_name);
+    // check if DataType of data is valid
+    if (columns.get(col).type() != data.type()) return false;
+    // set content of the cell to new value
+    columns.get(col).set(row, data.clone());
+    return true;
+  }
+
+  /**
+   * Sets the content of the cell pointed by column and row indexes parsing
+   * a string data.
+   *
+   * @param col the column index of the cell.
+   * @param row the row index of the cell.
+   * @param data the string content to be parsed.
+   * @return true if successful, else false.
+   * @throws ArrayIndexOutOfBoundsException if the column and row indexes are
+   * not valid.
+   *
+   */
+  public boolean set(int col, int row, String data) {
+    // check if col and row indexes are valid
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    if (!isRowIndex(row)) throw new ArrayIndexOutOfBoundsException(
+              "row=" + row + " is not a valid row index in " + table_name);
+    // set content of the cell to new value
+    return columns.get(col).set(row, data);
+  }
+
+  /**
    * Converts the column pointed by index as new data type. In order to
    * conversion to take place, new data type must differ from current one.
    * The data conversion will be forced because: if no parsing can take place,
@@ -649,7 +638,7 @@ public class Table {
    * @return true if successful, else false.
    * @throws ArrayIndexOutOfBoundsException if the column index is not valid.
    */
-  public boolean convertColumn(int col, DataTypes type) {
+  public boolean convertColumn(int col, int type) {
     // check if col index is valid
     if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
               "col=" + col + " is not a valid column index in " + table_name);
@@ -657,15 +646,15 @@ public class Table {
     Array array = new Array(columns.get(col).name());
     switch (type)
     {
-      case NUMERIC:
+      case Data.NUMERIC:
         for (int i = 0; i < table_rows; i++)
           array.add(new Numeric(columns.get(col).get(i).toString()));
         break;
-      case CHARACTER:
+      case Data.CHARACTER:
         for (int i = 0; i < table_rows; i++)
           array.add(new Character(columns.get(col).get(i).toString()));
         break;
-      case UNDEFINED:
+      case Data.UNDEFINED:
       default:
         return false;
     }
@@ -704,7 +693,7 @@ public class Table {
     for (int i = 0; i < table_cols; i++)
       sb.append("--------");
     sb.append("\n");
-    // build table content
+    // build table content        
     for (int i = 0; i < table_rows; i++)
     {
       for (int j = 0; j < table_cols; j++)
@@ -713,10 +702,10 @@ public class Table {
         {
           switch (columns.get(j).get(i).type())
           {
-            case CHARACTER:
+            case Data.CHARACTER:
               sb.append("_");
               break;
-            case NUMERIC:
+            case Data.NUMERIC:
               sb.append(".");
               break;
           }
@@ -737,9 +726,7 @@ public class Table {
     // return the string from StringBuilder
     return sb.toString();
   }
-  //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="Private Methods">
   /**
    * The function returns a untitled column name. It uses a counter to
    * generate unique column names such as {@code Column1} or {@code Column57}.
@@ -779,16 +766,16 @@ public class Table {
    * @param type the data type of the column.
    * @return an {@link Array} of empty data object.
    */
-  private Array getEmptyArray(DataTypes type) {
+  private Array getEmptyArray(int type) {
     // based on DataType add a column to the table
     Array new_array = new Array(getUntitledColumn());
     switch (type)
     {
-      case NUMERIC:
+      case Data.NUMERIC:
         new_array.add(new Numeric());
         break;
-      case CHARACTER:
-      case UNDEFINED:
+      case Data.CHARACTER:
+      case Data.UNDEFINED:
       default:
         new_array.add(new Character());
         break;
@@ -796,6 +783,5 @@ public class Table {
     new_array.fill(table_rows);
     return new_array;
   }
-  //</editor-fold>
 
 }

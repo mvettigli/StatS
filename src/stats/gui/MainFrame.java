@@ -30,7 +30,7 @@ public class MainFrame extends javax.swing.JFrame {
     frames = new ArrayList<>();
 
     setIconImage(new ImageIcon(getClass().getResource(
-            "/stats/gui/images/main.png")).getImage());    
+            "/stats/gui/images/main.png")).getImage());
   }
 
   /**
@@ -54,8 +54,6 @@ public class MainFrame extends javax.swing.JFrame {
     menu_debug = new javax.swing.JMenuItem();
     menu_open = new javax.swing.JMenuItem();
     jMenu2 = new javax.swing.JMenu();
-    jMenu3 = new javax.swing.JMenu();
-    menuScatterPlot = new javax.swing.JMenuItem();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("StatS - STatistical Analysis ToolS");
@@ -75,7 +73,7 @@ public class MainFrame extends javax.swing.JFrame {
     );
     lateralPaneLayout.setVerticalGroup(
       lateralPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 532, Short.MAX_VALUE)
+      .addGap(0, 530, Short.MAX_VALUE)
     );
 
     splitPane.setLeftComponent(lateralPane);
@@ -128,18 +126,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     jMenu2.setText("Edit");
     menuBar.add(jMenu2);
-
-    jMenu3.setText("Plot");
-
-    menuScatterPlot.setText("Scatter plot");
-    menuScatterPlot.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        menuScatterPlotActionPerformed(evt);
-      }
-    });
-    jMenu3.add(menuScatterPlot);
-
-    menuBar.add(jMenu3);
 
     setJMenuBar(menuBar);
 
@@ -239,10 +225,6 @@ public class MainFrame extends javax.swing.JFrame {
     tabbedPane.addTab("debug", tabframe.getIcon(), tabframe.getPanel());
   }//GEN-LAST:event_menu_debugActionPerformed
 
-  private void menuScatterPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuScatterPlotActionPerformed
-    
-  }//GEN-LAST:event_menuScatterPlotActionPerformed
-
   /**
    * @param args the command line arguments
    */
@@ -287,10 +269,8 @@ public class MainFrame extends javax.swing.JFrame {
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JMenu jMenu1;
   private javax.swing.JMenu jMenu2;
-  private javax.swing.JMenu jMenu3;
   private javax.swing.JPanel lateralPane;
   private javax.swing.JMenuBar menuBar;
-  private javax.swing.JMenuItem menuScatterPlot;
   private javax.swing.JMenuItem menu_debug;
   private javax.swing.JMenu menu_new;
   private javax.swing.JMenuItem menu_newTable;
