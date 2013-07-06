@@ -12,26 +12,31 @@ package stats.core;
  * superclass it is inhered from.
  *
  * @author M. Vettigli
- * @version 2.0
+ * @version 3.0
  */
 public class Character extends Data {
 
+  //<editor-fold defaultstate="collapsed" desc="Static Members">
   /**
    * The null value for {@code Character} class, an empty string.
    */
-  private static final String NULL = "";
+  public static final String NULL = "";
+  //</editor-fold>
 
+  //<editor-fold defaultstate="collapsed" desc="Private Members">
   /**
-   * The variable used to store content of {@code Character} object.
+   * Stores the content of {@code Character} object.
    */
   private String data;
+  //</editor-fold>
 
+  //<editor-fold defaultstate="collapsed" desc="Constructors">
   /**
-   * Default constructor for {@code Character} class. The content is
-   * initialized with null value.
+   * Default constructor for {@code Character} class. The content is initialized
+   * with null value.
    */
   public Character() {
-    this.data = NULL;
+    this(NULL);
   }
 
   /**
@@ -43,80 +48,89 @@ public class Character extends Data {
   public Character(String data) {
     this.data = data;
   }
+  //</editor-fold>
 
+  //<editor-fold defaultstate="collapsed" desc="Getters">
   /**
-   * The function sets the content of the {@code Character} object with the
-   * {@code data} argument.
-   *
-   * @param data the new content of the object.
-   * @return true if successful, else false.
-   */
-  @Override
-  public boolean set(String data) {
-    this.data = data;
-    return true;
-  }
-
-  /**
-   * The function returns the content of the {@code Character} object.
-   * Because the data is stored as {@code String}, the value returned is not a
-   * representation of the {@code Data} object.
+   * Returns the content of the {@code Character} object. Because the data is
+   * stored as {@code String}, the value returned is not a representation of the
+   * {@code Data} object.
    *
    * @return the content of the object.
    */
   public String get() {
-    return this.data;
+    return data;
   }
 
   /**
-   * The function returns the data type of the object.
+   * Returns the data type of the {@code Character} object.
    *
-   * @return {@code Data.CHARACTER}.
+   * @return {@code DataTypes.CHARACTER}.
    */
   @Override
-  public int type() {
-    return Data.CHARACTER;
+  public DataTypes type() {
+    return DataTypes.CHARACTER;
   }
 
   /**
-   * The function tells if the content of the object is set to null value.
+   * Checks if the content of the object is set to null value.
    *
    * @return true if null, else false.
    */
   @Override
   public boolean isEmpty() {
-    return (data == NULL);
+    return (data.equals(NULL));
+  }
+  //</editor-fold>
+
+  //<editor-fold defaultstate="collapsed" desc="Setters">
+  /**
+   * Changes the content of the {@code Character} object with given
+   * {@code String} argument.
+   *
+   * @param data new content of the object.
+   * @return true if successful, else false.
+   */
+  @Override
+  public boolean set(String data) {
+    // handle null string argument
+    if (data == null) data = new String();
+    // assign new data value
+    this.data = data;
+    return true;
   }
 
   /**
-   * The function sets the content of the {@code Character} object to null
-   * value.
+   * Sets the content of the {@code Character} object to null value.
    */
   @Override
   public void empty() {
-    this.data = NULL;
+    data = NULL;
   }
+  //</editor-fold>
 
+  //<editor-fold defaultstate="collapsed" desc="Public Methods">
   /**
-   * The function returns a string representation of the object. Because the
+   * Returns a string representation of the object. Because the
    * {@code Character} data is internally stored as a {@code String} object,
-   * it actually returns the content of the object as with get() function.
+   * it actually returns the content of the object.
    *
    * @return a string representation of the object.
    */
   @Override
   public String toString() {
-    return this.data;
+    return data;
   }
 
   /**
-   * The function returns a deep copy of the {@code Character} object.
+   * Returns a deep copy of the {@code Character} object.
    *
    * @return a deep copy of the object.
    */
   @Override
   public Data clone() {
-    return new Character(this.data);
+    return new Character(data);
   }
+  //</editor-fold>
 
 }
