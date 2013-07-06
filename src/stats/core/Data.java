@@ -11,32 +11,18 @@ package stats.core;
  * must implements its methods.
  *
  * @author M. Vettigli
- * @version 2.0
+ * @version 3.0
  */
 public abstract class Data {
 
+  //<editor-fold defaultstate="collapsed" desc="Getters">
   /**
-   * Defines character data type.
-   */
-  public final static int CHARACTER = 0;
-
-  /**
-   * Defines numeric data type.
-   */
-  public final static int NUMERIC = 1;
-  
-  /**
-   * Defines the undefined data type.
-   */
-  public final static int UNDEFINED = -1;
-
-  /**
-   * The function returns the type of the {@code Data} object. Because it is
-   * abstract, each subclass of {@code Data} must implement this method.
+   * Returns the type of the {@code Data} object. Because it is abstract, each
+   * subclass of {@code Data} must implement this method.
    *
    * @return the data type of the object.
    */
-  public abstract int type();
+  public abstract DataTypes type();
 
   /**
    * The function tells if the content of the {@code Data} object is empty.
@@ -46,24 +32,27 @@ public abstract class Data {
    * @return true if null, else false.
    */
   public abstract boolean isEmpty();
+  //</editor-fold>
 
+  //<editor-fold defaultstate="collapsed" desc="Setters">
   /**
-   * The function sets the content of the {@code Data} object to null
-   * value. Because it is abstract, each subclass of {@code Data} must
-   * implement this method.
-   */
-  public abstract void empty();
-
-  /**
-   * The function sets the content of the {@code Data} object parsing the
-   * string argument. Because it is abstract, each subclass of {@code Data}
-   * must implement this method.
+   * Changes the content of the {@code Data} object parsing the string argument.
+   * Because it is abstract, each subclass of {@code Data} must implement this
+   * method.
    *
    * @param data a string representation of the content.
    * @return true if assignment was successful, else false.
    */
   public abstract boolean set(String data);
 
+  /**
+   * Changes the content of the {@code Data} object to null value. Because it
+   * is abstract, each subclass of {@code Data} must implement this method.
+   */
+  public abstract void empty();
+  //</editor-fold>
+
+  //<editor-fold defaultstate="collapsed" desc="Public Methods">
   /**
    * The method returns a deep copy of the {@code Data} object. Because it
    * is abstract, each subclass of {@code Data} must implement this method.
@@ -72,5 +61,6 @@ public abstract class Data {
    */
   @Override
   public abstract Data clone();
+  //</editor-fold>
 
 }

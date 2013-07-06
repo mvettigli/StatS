@@ -7,6 +7,7 @@ package stats.gui.dialogs;
 
 import java.awt.Frame;
 import stats.core.Data;
+import stats.core.DataTypes;
 
 /**
  * The {@code DialogInsertCols} class is a dialog for getting all the
@@ -83,13 +84,13 @@ public class DialogInsertCols extends javax.swing.JDialog {
    *
    * @return the type of new columns.
    */
-  public int getColumnType() {
+  public DataTypes getColumnType() {
     //get the label of the selected item..
     String selection = comboDataType.getSelectedItem().toString();
     // and return data type based on its content 
-    if (selection.equals("Character")) return Data.CHARACTER;
-    else if (selection.equals("Numeric")) return Data.NUMERIC;
-    return Data.UNDEFINED;
+    if (selection.equals("Character")) return DataTypes.CHARACTER;
+    else if (selection.equals("Numeric")) return DataTypes.NUMERIC;
+    return DataTypes.UNDEFINED;
   }
 
   /**
