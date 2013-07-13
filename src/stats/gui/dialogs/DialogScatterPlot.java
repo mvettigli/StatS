@@ -1,10 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/* ----------------------------------------------------------------------------
+ * File: DialogScatterPlot.java
+ * Date: July 3rd, 2013
+ * ----------------------------------------------------------------------------
  */
 package stats.gui.dialogs;
 
+import java.awt.Frame;
 import java.util.ArrayList;
+import javax.swing.JDialog;
 import stats.core.Array;
 import stats.core.Node;
 import stats.core.Table;
@@ -13,17 +16,18 @@ import stats.core.Table;
  *
  * @author marco
  */
-public class DialogScatterPlot extends javax.swing.JDialog {
+public class DialogScatterPlot extends JDialog {
 
   private Node node;
 
   /**
    * Creates new form DialogScatterPlot
    */
-  public DialogScatterPlot(Node node, java.awt.Frame parent, boolean modal) {
+  public DialogScatterPlot(Node node, Frame parent, boolean modal) {
 
     super(parent, modal);
-
+    
+    
     // assign node for source data to the dialog
     if (node == null) throw new IllegalArgumentException(
               "Cannot initialize a DialogScatterPlot without source node.");
@@ -32,7 +36,8 @@ public class DialogScatterPlot extends javax.swing.JDialog {
     // initialize components
     initComponents();
     initComboTables();
-
+    
+    setLocationRelativeTo(parent);
   }
 
   private void initComboTables() {
@@ -51,11 +56,9 @@ public class DialogScatterPlot extends javax.swing.JDialog {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    jLabel1 = new javax.swing.JLabel();
+    labelTable = new javax.swing.JLabel();
     comboTables = new javax.swing.JComboBox();
-    jButton1 = new javax.swing.JButton();
-    jButton2 = new javax.swing.JButton();
-    jSplitPane1 = new javax.swing.JSplitPane();
+    splitPane = new javax.swing.JSplitPane();
     jTabbedPane1 = new javax.swing.JTabbedPane();
     panelVariables = new javax.swing.JPanel();
     selectorResponse = new stats.gui.ArraySelector();
@@ -64,12 +67,15 @@ public class DialogScatterPlot extends javax.swing.JDialog {
     selectorSplitting = new stats.gui.ArraySelector();
     panelSettings = new javax.swing.JPanel();
     selectorColumns = new stats.gui.ArraySelector();
-    jSeparator1 = new javax.swing.JSeparator();
+    separator = new javax.swing.JSeparator();
+    buttonOk = new javax.swing.JButton();
+    buttonCancel = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setTitle("Scatter plot");
+    setIconImage(null);
 
-    jLabel1.setText("Table:");
+    labelTable.setText("Table:");
 
     comboTables.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -77,11 +83,7 @@ public class DialogScatterPlot extends javax.swing.JDialog {
       }
     });
 
-    jButton1.setText("OK");
-
-    jButton2.setText("Cancel");
-
-    jSplitPane1.setDividerLocation(150);
+    splitPane.setDividerLocation(150);
 
     selectorResponse.setDataType(stats.core.DataTypes.NUMERIC);
     selectorResponse.setSourceSelector(selectorColumns);
@@ -105,10 +107,10 @@ public class DialogScatterPlot extends javax.swing.JDialog {
       .addGroup(panelVariablesLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(panelVariablesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(selectorResponse, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
-          .addComponent(selectorFactor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(selectorGrouping, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-          .addComponent(selectorSplitting, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .addComponent(selectorResponse, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+          .addComponent(selectorFactor, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(selectorGrouping, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+          .addComponent(selectorSplitting, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         .addContainerGap())
     );
     panelVariablesLayout.setVerticalGroup(
@@ -122,7 +124,7 @@ public class DialogScatterPlot extends javax.swing.JDialog {
         .addComponent(selectorGrouping, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(selectorSplitting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(52, Short.MAX_VALUE))
+        .addContainerGap(30, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("Variables", panelVariables);
@@ -131,19 +133,23 @@ public class DialogScatterPlot extends javax.swing.JDialog {
     panelSettings.setLayout(panelSettingsLayout);
     panelSettingsLayout.setHorizontalGroup(
       panelSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 413, Short.MAX_VALUE)
+      .addGap(0, 335, Short.MAX_VALUE)
     );
     panelSettingsLayout.setVerticalGroup(
       panelSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 489, Short.MAX_VALUE)
+      .addGap(0, 476, Short.MAX_VALUE)
     );
 
-    jTabbedPane1.addTab("Settings", panelSettings);
+    jTabbedPane1.addTab("Options", panelSettings);
 
-    jSplitPane1.setRightComponent(jTabbedPane1);
+    splitPane.setRightComponent(jTabbedPane1);
 
     selectorColumns.setTitle("Columns");
-    jSplitPane1.setLeftComponent(selectorColumns);
+    splitPane.setLeftComponent(selectorColumns);
+
+    buttonOk.setText("OK");
+
+    buttonCancel.setText("Cancel");
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -152,19 +158,19 @@ public class DialogScatterPlot extends javax.swing.JDialog {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
-          .addComponent(jSeparator1)
+          .addComponent(splitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
+          .addComponent(separator)
           .addGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
+                .addComponent(labelTable)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(comboTables, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
               .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(buttonOk)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)))
+                .addComponent(buttonCancel)))
             .addContainerGap())))
     );
     layout.setVerticalGroup(
@@ -172,16 +178,16 @@ public class DialogScatterPlot extends javax.swing.JDialog {
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel1)
+          .addComponent(labelTable)
           .addComponent(comboTables, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jSplitPane1)
+        .addComponent(splitPane)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(separator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jButton1)
-          .addComponent(jButton2))
+          .addComponent(buttonOk)
+          .addComponent(buttonCancel))
         .addContainerGap())
     );
 
@@ -205,13 +211,11 @@ public class DialogScatterPlot extends javax.swing.JDialog {
   }//GEN-LAST:event_comboTablesActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton buttonCancel;
+  private javax.swing.JButton buttonOk;
   private javax.swing.JComboBox comboTables;
-  private javax.swing.JButton jButton1;
-  private javax.swing.JButton jButton2;
-  private javax.swing.JLabel jLabel1;
-  private javax.swing.JSeparator jSeparator1;
-  private javax.swing.JSplitPane jSplitPane1;
   private javax.swing.JTabbedPane jTabbedPane1;
+  private javax.swing.JLabel labelTable;
   private javax.swing.JPanel panelSettings;
   private javax.swing.JPanel panelVariables;
   private stats.gui.ArraySelector selectorColumns;
@@ -219,6 +223,8 @@ public class DialogScatterPlot extends javax.swing.JDialog {
   private stats.gui.ArraySelector selectorGrouping;
   private stats.gui.ArraySelector selectorResponse;
   private stats.gui.ArraySelector selectorSplitting;
+  private javax.swing.JSeparator separator;
+  private javax.swing.JSplitPane splitPane;
   // End of variables declaration//GEN-END:variables
 
 }

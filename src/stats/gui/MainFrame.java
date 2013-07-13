@@ -1,6 +1,27 @@
-/* ----------------------------------------------------------------------------
- * File: MainFrame.java
- * Date: March 31th, 2013
+/* ============================================================================
+ *                   StatS - STatistical Analysis ToolS
+ * ============================================================================
+ *
+ *   File: MainFrame.java
+ *   Date: Mar 31, 2013
+ *
+ * ---------------------------------------------------------------------------- 
+ *
+ * Copyright (C) 2013 M. Vettigli <m.vettigli@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
  * ----------------------------------------------------------------------------
  */
 package stats.gui;
@@ -10,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 import stats.core.Node;
 import stats.utils.FileUtils;
@@ -21,7 +43,11 @@ import stats.utils.CSVParser;
  *
  * @author marco
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends JFrame {
+
+  private ArrayList<TabFrame> frames;
+
+  private Node sessionNode;
 
   /**
    * Creates new form MainFrame
@@ -62,7 +88,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setTitle("StatS - STatistical Analysis ToolS");
-    setFocusable(false);
 
     toolPane.setFloatable(false);
     toolPane.setRollover(true);
@@ -287,10 +312,13 @@ public class MainFrame extends javax.swing.JFrame {
     /* Create and display the form */
     java.awt.EventQueue.invokeLater(new Runnable() {
       public void run() {
-        new MainFrame().setVisible(true);
+        MainFrame mainFrame = new MainFrame();
+        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        mainFrame.setVisible(true);
       }
     });
   }
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JMenu jMenu1;
   private javax.swing.JMenu jMenu2;
@@ -307,9 +335,5 @@ public class MainFrame extends javax.swing.JFrame {
   private javax.swing.JTabbedPane tabbedPane;
   private javax.swing.JToolBar toolPane;
   // End of variables declaration//GEN-END:variables
-
-  private ArrayList<TabFrame> frames;
-
-  private Node sessionNode;
 
 }

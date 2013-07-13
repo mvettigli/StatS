@@ -1,22 +1,54 @@
-/* ----------------------------------------------------------------------------
- * File: PlotHandler.java
- * Date: June 6th, 2013
+/* ============================================================================
+ *                   StatS - STatistical Analysis ToolS
+ * ============================================================================
+ *
+ *   File: PlotHandler.java
+ *   Date: Jun 6, 2013
+ *
+ * ---------------------------------------------------------------------------- 
+ *
+ * Copyright (C) 2013 M. Vettigli <m.vettigli@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
  * ----------------------------------------------------------------------------
  */
 package stats.gui;
 
-import stats.graphics.Axis;
+import java.util.ArrayList;
+import javax.swing.JPanel;
+import stats.graphics.ScatterPlot;
 
 /**
  *
  * @author marco
  */
-public class PlotHandler extends javax.swing.JPanel {
+public class PlotHandler extends JPanel {
+
+  /**
+   * Stores the generated plots
+   */
+  ArrayList<ScatterPlot> plots;
 
   /**
    * Creates new form PlotHandler
    */
   public PlotHandler() {
+
+    /* initialize objects members */
+    plots = new ArrayList<>();
+
     initComponents();
   }
 
@@ -30,51 +62,38 @@ public class PlotHandler extends javax.swing.JPanel {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    jScrollPane1 = new javax.swing.JScrollPane();
-    jPanel1 = new javax.swing.JPanel();
-    axis2 = new stats.graphics.Axis();
+    toolBar = new javax.swing.JToolBar();
+    buttonSettings = new javax.swing.JButton();
+    mainScrollPane = new javax.swing.JScrollPane();
 
-    axis2.setAxisOrientation(stats.graphics.Axis.Orientations.VERTICAL);
-    axis2.setFocusable(false);
-    axis2.setIncrement(0.76);
-    axis2.setMaximum(7.0);
-    axis2.setMinimum(-1.0);
-    axis2.setSteps(5);
+    toolBar.setFloatable(false);
+    toolBar.setRollover(true);
 
-    javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-    jPanel1.setLayout(jPanel1Layout);
-    jPanel1Layout.setHorizontalGroup(
-      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel1Layout.createSequentialGroup()
-        .addGap(57, 57, 57)
-        .addComponent(axis2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(17386, Short.MAX_VALUE))
-    );
-    jPanel1Layout.setVerticalGroup(
-      jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(jPanel1Layout.createSequentialGroup()
-        .addGap(20, 20, 20)
-        .addComponent(axis2, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(12200, Short.MAX_VALUE))
-    );
-
-    jScrollPane1.setViewportView(jPanel1);
+    buttonSettings.setText("Settings");
+    buttonSettings.setFocusable(false);
+    buttonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    toolBar.add(buttonSettings);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
+      .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+      .addComponent(mainScrollPane)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
+      .addGroup(layout.createSequentialGroup()
+        .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addComponent(mainScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private stats.graphics.Axis axis2;
-  private javax.swing.JPanel jPanel1;
-  private javax.swing.JScrollPane jScrollPane1;
+  private javax.swing.JButton buttonSettings;
+  private javax.swing.JScrollPane mainScrollPane;
+  private javax.swing.JToolBar toolBar;
   // End of variables declaration//GEN-END:variables
 }
