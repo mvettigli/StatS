@@ -798,4 +798,11 @@ public class Table {
   }
   //</editor-fold>
 
+  public Array getArray(int col) {
+
+    if (!isColumnIndex(col)) throw new ArrayIndexOutOfBoundsException(
+              "col=" + col + " is not a valid column index in " + table_name);
+    return columns.get(col);
+  }
+
 }

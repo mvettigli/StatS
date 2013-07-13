@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import stats.core.Node;
 import stats.utils.FileUtils;
 import stats.core.Table;
+import stats.gui.dialogs.DialogScatterPlot;
 import stats.utils.CSVParser;
 
 /**
@@ -28,9 +30,10 @@ public class MainFrame extends javax.swing.JFrame {
     initComponents();
 
     frames = new ArrayList<>();
+    sessionNode = new Node("Application Session");
 
     setIconImage(new ImageIcon(getClass().getResource(
-            "/stats/gui/images/main.png")).getImage());    
+            "/stats/gui/images/main.png")).getImage());
   }
 
   /**
@@ -165,8 +168,10 @@ public class MainFrame extends javax.swing.JFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void menu_newTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_newTableActionPerformed
-    // TODO add your handling code here:    
+    // Create new table and assign to session node
     Table table = new Table();
+    sessionNode.addTable(table);
+    // create a table handler and a tabframe to handle it
     TableHandler tablehandler = new TableHandler(table, true);
     TabFrame tabframe = new TabFrame(tablehandler, new ImageIcon(
             getClass().getResource("/stats/gui/images/table.png")));
@@ -219,6 +224,7 @@ public class MainFrame extends javax.swing.JFrame {
       // parse the file and get the resulting table
       Table table = parser.parseFile();
       table.setName(FileUtils.getFileName(selectedFile));
+      sessionNode.addTable(table);
       // create new TabFrame
       TableHandler tablehandler = new TableHandler(table, true);
       TabFrame tabframe = new TabFrame(tablehandler, new ImageIcon(
@@ -240,7 +246,8 @@ public class MainFrame extends javax.swing.JFrame {
   }//GEN-LAST:event_menu_debugActionPerformed
 
   private void menuScatterPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuScatterPlotActionPerformed
-    
+    DialogScatterPlot dialog = new DialogScatterPlot(sessionNode, this, true);
+    dialog.setVisible(true);
   }//GEN-LAST:event_menuScatterPlotActionPerformed
 
   /**
@@ -302,5 +309,7 @@ public class MainFrame extends javax.swing.JFrame {
   // End of variables declaration//GEN-END:variables
 
   private ArrayList<TabFrame> frames;
+
+  private Node sessionNode;
 
 }

@@ -5,6 +5,7 @@
  */
 package stats.gui;
 
+import stats.core.SelectionGroup;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

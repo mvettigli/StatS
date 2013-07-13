@@ -3,7 +3,7 @@
  * Date: June 12th, 2013
  * ----------------------------------------------------------------------------
  */
-package stats.gui;
+package stats.core;
 
 import java.awt.Color;
 import java.awt.Graphics;
