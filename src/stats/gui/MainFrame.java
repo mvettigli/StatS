@@ -24,6 +24,7 @@
  * 
  * ----------------------------------------------------------------------------
  */
+
 package stats.gui;
 
 import java.io.File;
@@ -33,9 +34,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
+import stats.core.Array;
 import stats.core.Node;
+import stats.core.Numeric;
 import stats.utils.FileUtils;
 import stats.core.Table;
+import stats.graphics.ScatterPlot;
 import stats.gui.dialogs.DialogScatterPlot;
 import stats.utils.CSVParser;
 
@@ -263,16 +267,34 @@ public class MainFrame extends JFrame {
 
   private void menu_debugActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menu_debugActionPerformed
     // create new TabFrame
-
     PlotHandler plotHandler = new PlotHandler();
-    TabFrame tabframe = new TabFrame(plotHandler, null);
-    frames.add(tabframe);
-    tabbedPane.addTab("debug", tabframe.getIcon(), tabframe.getPanel());
+    Array x = new Array("X-Axis");
+    Array y = new Array("Y-Axis");
+    x.add(new Numeric(0));
+    x.add(new Numeric(10));
+    y.add(new Numeric(0));
+    y.add(new Numeric(10));
+    plotHandler.addPlot(new ScatterPlot(x, y));
+    tabbedPane.addTab("debug", plotHandler);
   }//GEN-LAST:event_menu_debugActionPerformed
 
   private void menuScatterPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuScatterPlotActionPerformed
     DialogScatterPlot dialog = new DialogScatterPlot(sessionNode, this, true);
-    dialog.setVisible(true);
+    if (!dialog.showDialog()) return;
+    
+    PlotHandler plotHandler = new PlotHandler();
+    ArrayList<Array> responses = dialog.getResponseVariables();
+    ArrayList<Array> factors = dialog.getFactorVariables();
+    for (Array response : responses)
+    {
+      for (Array factor : factors)
+      {
+        ScatterPlot plot = new ScatterPlot(factor, response);
+        plotHandler.addPlot(plot);
+      }
+    }
+    tabbedPane.addTab("Scatter plot", plotHandler);
+
   }//GEN-LAST:event_menuScatterPlotActionPerformed
 
   /**

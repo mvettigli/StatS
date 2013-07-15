@@ -3,11 +3,13 @@
  * Date: July 3rd, 2013
  * ----------------------------------------------------------------------------
  */
+
 package stats.gui.dialogs;
 
 import java.awt.Frame;
 import java.util.ArrayList;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import stats.core.Array;
 import stats.core.Node;
 import stats.core.Table;
@@ -20,24 +22,48 @@ public class DialogScatterPlot extends JDialog {
 
   private Node node;
 
+  private boolean dialogResult;
+
   /**
    * Creates new form DialogScatterPlot
    */
   public DialogScatterPlot(Node node, Frame parent, boolean modal) {
 
     super(parent, modal);
-    
-    
+
+
     // assign node for source data to the dialog
     if (node == null) throw new IllegalArgumentException(
               "Cannot initialize a DialogScatterPlot without source node.");
     this.node = node;
+    this.dialogResult = false;
 
     // initialize components
     initComponents();
     initComboTables();
-    
+
     setLocationRelativeTo(parent);
+  }
+
+  public ArrayList<Array> getResponseVariables() {
+    return selectorResponse.getArrays();
+  }
+
+  public ArrayList<Array> getFactorVariables() {
+    return selectorFactor.getArrays();
+  }
+
+  public ArrayList<Array> getGroupingVariables() {
+    return selectorGrouping.getArrays();
+  }
+
+  public ArrayList<Array> getSplittingVariables() {
+    return selectorSplitting.getArrays();
+  }
+
+  public boolean showDialog() {
+    setVisible(true);
+    return dialogResult;
   }
 
   private void initComboTables() {
@@ -107,7 +133,7 @@ public class DialogScatterPlot extends JDialog {
       .addGroup(panelVariablesLayout.createSequentialGroup()
         .addContainerGap()
         .addGroup(panelVariablesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(selectorResponse, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+          .addComponent(selectorResponse, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
           .addComponent(selectorFactor, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
           .addComponent(selectorGrouping, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
           .addComponent(selectorSplitting, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
@@ -124,7 +150,7 @@ public class DialogScatterPlot extends JDialog {
         .addComponent(selectorGrouping, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(selectorSplitting, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(30, Short.MAX_VALUE))
+        .addContainerGap(39, Short.MAX_VALUE))
     );
 
     jTabbedPane1.addTab("Variables", panelVariables);
@@ -148,8 +174,18 @@ public class DialogScatterPlot extends JDialog {
     splitPane.setLeftComponent(selectorColumns);
 
     buttonOk.setText("OK");
+    buttonOk.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonOkActionPerformed(evt);
+      }
+    });
 
     buttonCancel.setText("Cancel");
+    buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        buttonCancelActionPerformed(evt);
+      }
+    });
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
@@ -209,6 +245,30 @@ public class DialogScatterPlot extends JDialog {
     selectorColumns.insertArrays(columns);
 
   }//GEN-LAST:event_comboTablesActionPerformed
+
+  private void buttonOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonOkActionPerformed
+    if (selectorResponse.getArrays().isEmpty())
+    {
+      JOptionPane.showMessageDialog(this,
+              "Please insert a least one response variable.",
+              "Warning", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+    if (selectorFactor.getArrays().isEmpty())
+    {
+      JOptionPane.showMessageDialog(this,
+              "Please insert a least one factor variable.",
+              "Warning", JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+    dialogResult = true;
+    this.dispose();
+  }//GEN-LAST:event_buttonOkActionPerformed
+
+  private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+    dialogResult = false;
+    this.dispose();
+  }//GEN-LAST:event_buttonCancelActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton buttonCancel;

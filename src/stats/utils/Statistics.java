@@ -27,7 +27,6 @@
 package stats.utils;
 
 import stats.core.Array;
-import stats.core.Data;
 import stats.core.DataTypes;
 import stats.core.Numeric;
 

@@ -380,7 +380,16 @@ public class Axis extends Component {
    * @return the zero offset from upper-left corner.
    */
   public int getZeroOffset() {
-    return this.zeroOffset;
+    switch (axisOrientation)
+    {
+      case HORIZONTAL:
+        return zeroOffset;
+      case VERTICAL:
+        return this.getHeight() - zeroOffset;
+      default:
+        return -1;
+    }
+
   }
 
   public void setTitle(String title) {
@@ -548,9 +557,10 @@ public class Axis extends Component {
     System.out.println(number3);
     System.out.println(inc / steps);
 
-    /* draw background, for debug */
+    /* draw background, for debug 
     g2D.setColor(Color.WHITE);
     g2D.fillRect(0, 0, this.getWidth(), this.getHeight());
+    */
 
     // rotate the Graphics object when orientation is vertical
     switch (axisOrientation)
@@ -635,6 +645,7 @@ public class Axis extends Component {
         case HORIZONTAL:
           break;
       }
+
     }
 
     /* draw axis title */
@@ -644,6 +655,17 @@ public class Axis extends Component {
             + ((showLabels) ? labelOffset : 0);
     g2D.setFont(titleFont);
     g2D.drawString(title, x, y);
+
+    // rotate the Graphics object when orientation is vertical
+    switch (axisOrientation)
+    {
+      case VERTICAL:
+        g2D.translate(0, this.getWidth() - 1);
+        g2D.rotate(Math.toRadians(-90));
+        break;
+      case HORIZONTAL:
+        break;
+    }
 
   }
 

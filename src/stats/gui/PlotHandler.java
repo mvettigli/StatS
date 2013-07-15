@@ -24,10 +24,12 @@
  * 
  * ----------------------------------------------------------------------------
  */
+
 package stats.gui;
 
 import java.util.ArrayList;
 import javax.swing.JPanel;
+import stats.graphics.Plot;
 import stats.graphics.ScatterPlot;
 
 /**
@@ -39,8 +41,10 @@ public class PlotHandler extends JPanel {
   /**
    * Stores the generated plots
    */
-  ArrayList<ScatterPlot> plots;
+  ArrayList<Plot> plots;
 
+  private int index;
+  
   /**
    * Creates new form PlotHandler
    */
@@ -48,10 +52,19 @@ public class PlotHandler extends JPanel {
 
     /* initialize objects members */
     plots = new ArrayList<>();
+    index = -1;
 
     initComponents();
   }
 
+  public void addPlot(Plot plot) {
+    if (plots.contains(plot)) return;
+    plots.add(plot);
+    panel.add(plot);
+  }
+
+  
+  
   /**
    * This method is called from within the constructor to
    * initialize the form.
@@ -64,7 +77,7 @@ public class PlotHandler extends JPanel {
 
     toolBar = new javax.swing.JToolBar();
     buttonSettings = new javax.swing.JButton();
-    mainScrollPane = new javax.swing.JScrollPane();
+    panel = new javax.swing.JPanel();
 
     toolBar.setFloatable(false);
     toolBar.setRollover(true);
@@ -75,25 +88,27 @@ public class PlotHandler extends JPanel {
     buttonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
     toolBar.add(buttonSettings);
 
+    panel.setLayout(new java.awt.CardLayout());
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addComponent(toolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
-      .addComponent(mainScrollPane)
+      .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(layout.createSequentialGroup()
         .addComponent(toolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(mainScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
+        .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
     );
   }// </editor-fold>//GEN-END:initComponents
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton buttonSettings;
-  private javax.swing.JScrollPane mainScrollPane;
+  private javax.swing.JPanel panel;
   private javax.swing.JToolBar toolBar;
   // End of variables declaration//GEN-END:variables
 }
